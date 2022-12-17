@@ -337,3 +337,8 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
 ];
+
+export const TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS = "";
+export const TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS = "";
+export const TESTNET_AFSBT_IMPL_CONTRACT_ABI = "";
+export const TESTNET_QFSBT_IMPL_CONTRACT_ABI = "";

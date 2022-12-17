@@ -19,6 +19,8 @@ model user {
 
   itemTransfers        itemTransfer[]
   entitlementTransfers entitlementTransfer[]
+  userItem             userItem[]
+  userEntitlement      userEntitlement[]
 }
 
 model nonce {
@@ -76,4 +78,22 @@ model entitlementToken {
   contractAddress String
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model userItem {
+  id        Int      @id @default(autoincrement())
+  playFabId String
+  itemId    Int      @unique
+  user      user     @relation(fields: [playFabId], references: [playFabId])
+  created   DateTime @default(now()) @db.DateTime(6)
+  updated   DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model userEntitlement {
+  id            Int      @id @default(autoincrement())
+  playFabId     String
+  entitlementId Int      @unique
+  user          user     @relation(fields: [playFabId], references: [playFabId])
+  created       DateTime @default(now()) @db.DateTime(6)
+  updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
 }

@@ -110,6 +110,7 @@ export class PlayFabService {
       },
     });
 
+    // TODO : contract call
     return parsedData;
   }
 
