@@ -337,6 +337,3 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
 ];
-
-export const PRIVATE_KEY =
-  "afb9ebb708b1aa6a893dd110c58ee2ba0a18469ad3e623c1dcb9947250f3e2b8";
