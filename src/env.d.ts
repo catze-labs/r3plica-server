@@ -1,6 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
     ENVIRONMENT: "local" | "dev" | "prod";
+    PORT: number;
     DATABASE_URL: string;
     PLAY_FAB_X_SECRET_KEY: string;
     PLAY_FAB_TITLE_ID: string;
