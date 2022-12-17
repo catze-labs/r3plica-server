@@ -74,7 +74,7 @@ export class PlayFabController {
       );
 
     return {
-      list: await this.PlayFabService.getUserEntitlements(userInfo.PlayFabId),
+      entitlements: await this.PlayFabService.getUserEntitlements(userInfo.PlayFabId),
     };
   }
 }

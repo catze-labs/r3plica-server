@@ -161,7 +161,7 @@ export const entitlementsApiResponse = {
   schema: {
     type: "object",
     properties: {
-      list: {
+      entitlements: {
         type: "array",
         items: {
           type: "object",
