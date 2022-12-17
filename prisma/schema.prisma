@@ -61,3 +61,19 @@ model entitlementTransfer {
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
+
+model itemToken {
+  tokenId         String   @id
+  itemId          Int
+  contractAddress String
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model entitlementToken {
+  tokenId         String   @id
+  entitlementId   Int
+  contractAddress String
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
