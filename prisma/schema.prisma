@@ -39,7 +39,7 @@ model latestBlock {
 }
 
 model itemTransfer {
-  id              Int      @id
+  id              Int      @id @default(autoincrement())
   txHash          String
   item            Json
   playFabId       String
@@ -51,7 +51,7 @@ model itemTransfer {
 }
 
 model entitlementTransfer {
-  id              Int      @id
+  id              Int      @id @default(autoincrement())
   txHash          String
   entitlement     Json
   playFabId       String
@@ -63,13 +63,25 @@ model entitlementTransfer {
 }
 
 model itemToken {
-  itemId     Int      @id
-  tokenCount Int
-  updated    DateTime @default(now()) @updatedAt @db.DateTime(6)
+  itemId  Int      @id
+  count   Int
+  updated DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
 model entitlementToken {
   entitlementId Int      @id
-  tokenCount    Int
+  count         Int
   updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model lastTransferredItemToken {
+  tokenId Int      @id
+  itemId  Int
+  created DateTime @default(now()) @db.DateTime(6)
+}
+
+model lastTransferredEntitlementToken {
+  tokenId       Int      @id
+  entitlementId Int
+  created       DateTime @default(now()) @db.DateTime(6)
 }

@@ -38,3 +38,19 @@ export interface UserEntitlementWrapper extends UserEntitlement {
   isTransferred: boolean;
   transfer?: entitlementTransfer;
 }
+
+export interface ItemTransferRequest {
+  playFabId: string;
+  walletAddress: string;
+  itemId: number;
+  itemName: string;
+  itemRarity: string;
+}
+
+export interface EntitlementTransferRequest {
+  playFabId: string;
+  walletAddress: string;
+  entitlementId: number;
+  entitlementTitle: string;
+  entitlementDescription: string;
+}
