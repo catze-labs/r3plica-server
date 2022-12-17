@@ -6,4 +6,4 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     image: mysql
     ports:
-      - '3306:3306'
+      - "3306:3306"
