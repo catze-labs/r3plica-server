@@ -61,7 +61,7 @@ export class PlayFabController {
         sessionTicket
       );
 
-    return { list: await this.PlayFabService.getUserItems(userInfo.PlayFabId) };
+    return { items: await this.PlayFabService.getUserItems(userInfo.PlayFabId) };
   }
 
   @Get("entitlements")
