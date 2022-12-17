@@ -1,6 +1,49 @@
-import { Controller } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import { PlayFabService } from "src/services/playfab/playfab.service";
+import { Web3Service } from "src/web3.service";
+import { TransferFsbtRequestDto } from "./dto/transfer-fsbt-request.dto";
+import { TransferFsbtDto } from "./dto/transfer-fsbt.dto";
+import { getTransferResponse, postTransferResponse } from "./schema";
 
 @Controller("transfer")
 @ApiTags("Transfer")
-export class TransferController {}
+export class TransferController {
+  constructor(
+    private playFabService: PlayFabService,
+    private web3Service: Web3Service
+  ) {}
+
+  @Get()
+  @ApiResponse(getTransferResponse)
+  async getTransfers(@Query() transferFsbtDto: TransferFsbtDto) {
+    const { sessionTicket } = transferFsbtDto;
+
+    const userInfo =
+      await this.playFabService.validateAndGetUserInfoBySessionTicket(
+        sessionTicket
+      );
+
+    return await this.web3Service.getFsbtTransferList(userInfo.PlayFabId);
+  }
+
+  // TODO : Add ApiResponse
+  @Post()
+  @ApiResponse(postTransferResponse)
+  async transferFsbtToUser(
+    @Body() transferFsbtRequestDto: TransferFsbtRequestDto
+  ) {
+    const { sessionTicket, itemIds, entitlementIds } = transferFsbtRequestDto;
+
+    const userInfo =
+      await this.playFabService.validateAndGetUserInfoBySessionTicket(
+        sessionTicket
+      );
+
+    return await this.web3Service.fsbtTransferToWallet(
+      userInfo.PlayFabId,
+      itemIds,
+      entitlementIds
+    );
+  }
+}
