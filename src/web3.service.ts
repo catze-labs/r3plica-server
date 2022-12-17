@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException, } from "@nestjs/common";
+import { Injectable, NotFoundException, } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
-import { TESTNET_IMPL_CONTRACT_ABI, TESTNET_PROXY_CONTRACT_ADDRESS, } from "./constants";
 import { PrismaService } from "./prisma.service";
 import { PlayFabService } from "./services/playfab/playfab.service";
 
@@ -99,5 +98,14 @@ export class Web3Service {
     // } catch (err) {
     //   console.log(err);
     // }
+
+    // TODO: Create itemTransfer, entitlementTransfer records.
+    // await this.prismaService.itemTransfer.create({
+    //   data: {}
+    // });
+    //
+    // await this.prismaService.entitlementTransfer.create({
+    //   data: {}
+    // });
   }
 }
