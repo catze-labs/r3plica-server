@@ -1,10 +1,19 @@
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
-import { PRIVATE_KEY, TESTNET_IMPL_CONTRACT_ABI, TESTNET_PROXY_CONTRACT_ADDRESS, } from "./constants";
+import {
+  PRIVATE_KEY,
+  TESTNET_IMPL_CONTRACT_ABI,
+  TESTNET_PROXY_CONTRACT_ADDRESS,
+} from "./constants";
 import { PrismaService } from "./prisma.service";
 import { PlayFabService } from "./services/playfab/playfab.service";
 
+@Injectable()
 export class Web3Service {
   private provider = new Web3.providers.HttpProvider(
     process.env.BSC_TEST_PROVIDER
@@ -14,8 +23,7 @@ export class Web3Service {
   constructor(
     private prismaService: PrismaService,
     private playFabService: PlayFabService
-  ) {
-  }
+  ) {}
 
   async getFsbtTransferList(playFabId: string) {
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
