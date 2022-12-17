@@ -51,6 +51,7 @@ export class CronService {
             playFabId: user.playFabId
           }
         });
+        //  TODO: contract call
       }
 
       let entitlements = await this.playFabService.getUserEntitlements(
@@ -74,6 +75,7 @@ export class CronService {
             playFabId: user.playFabId
           }
         });
+        //  TODO: contract call
       }
     }
   }
