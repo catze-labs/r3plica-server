@@ -43,7 +43,7 @@ model latestBlock {
 model itemTransfer {
   id              Int      @id
   txHash          String
-  txStatus        Boolean
+  txStatus        Boolean?
   item            Json
   playFabId       String
   tokenId         String?
@@ -56,7 +56,7 @@ model itemTransfer {
 model entitlementTransfer {
   id              Int      @id
   txHash          String
-  txStatus        Boolean
+  txStatus        Boolean?
   entitlement     Json
   playFabId       String
   tokenId         String?
