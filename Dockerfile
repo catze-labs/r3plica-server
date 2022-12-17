@@ -7,4 +7,4 @@ RUN yarn run build
 
 
 EXPOSE 3000
-CMD yarn db-push --accept-data-loss && yarn db-gen-all && yarn run start:prod
+CMD yarn db-push --accept-data-loss && yarn db-gen && yarn run start:prod
