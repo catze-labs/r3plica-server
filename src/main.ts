@@ -12,13 +12,15 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle("r3plica")
-    .setDescription("r3plica API")
-    .build();
+  if (process.env.ENVIRONMENT !== "prod") {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle("r3plica")
+      .setDescription("r3plica API")
+      .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup("/docs", app, document);
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup("/docs", app, document);
+  }
 
   app.enableCors({
     origin: "*",

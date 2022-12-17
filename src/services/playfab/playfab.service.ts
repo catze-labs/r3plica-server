@@ -1,16 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException, } from "@nestjs/common";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
-import {
-  UserEntitlement,
-  UserEntitlementWrapper,
-  UserItem,
-  UserItemWrapper,
-} from "src/types";
+import { UserEntitlement, UserEntitlementWrapper, UserItem, UserItemWrapper, } from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
@@ -21,7 +12,8 @@ export class PlayFabService {
     private readonly prismaService: PrismaService,
     private readonly signatureService: SignatureService,
     private readonly userService: UserService
-  ) {}
+  ) {
+  }
 
   async validateEmail(email: string) {
     const count = await this.prismaService.user.count({
@@ -110,6 +102,7 @@ export class PlayFabService {
       },
     });
 
+    // TODO : contract call
     return parsedData;
   }
 
@@ -180,10 +173,10 @@ export class PlayFabService {
     }
 
     // Parsing axios response data
-    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
+    let userItems: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
-    const userItemTransferList = await this.prismaService.itemTransfer.findMany(
+    const itemTransfers = await this.prismaService.itemTransfer.findMany(
       {
         where: {
           playFabId,
@@ -191,22 +184,22 @@ export class PlayFabService {
       }
     );
 
-    list = list.filter(
-      (item) => item.rarity === "Epic" || item.rarity === "Legendary"
+    userItems = userItems.filter(
+      (userItem) => userItem.rarity === "Epic" || userItem.rarity === "Legendary"
     );
 
-    return list.map((item) => {
+    return userItems.map((userItem) => {
       const wrappedItem: UserItemWrapper = {
-        ...item,
+        ...userItem,
         isTransferred: false,
         transfer: null,
       };
 
       // Compare transferred item to user already have item
-      for (let transfer of userItemTransferList) {
-        if (transfer.item["itemId"] === item.itemID) {
+      for (let itemTransfer of itemTransfers) {
+        if (itemTransfer.itemId === userItem.itemID && itemTransfer.txStatus) {
           wrappedItem.isTransferred = true;
-          wrappedItem.transfer = transfer;
+          wrappedItem.transfer = itemTransfer;
         }
       }
 
@@ -240,28 +233,28 @@ export class PlayFabService {
     }
 
     // Parsing axios response data
-    let list: UserEntitlement[] =
+    let userEntitlements: UserEntitlement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
-    const userEntitlementTransferList =
+    const entitlementTransfers =
       await this.prismaService.entitlementTransfer.findMany({
         where: {
           playFabId,
         },
       });
 
-    return list.map((quest) => {
+    return userEntitlements.map((quest) => {
       const wrappedItem: UserEntitlementWrapper = {
         ...quest,
         isTransferred: false,
         transfer: null,
       };
 
-      for (let transfer of userEntitlementTransferList) {
-        if (transfer.entitlement["questId"] === quest.questID) {
+      for (let entitlementTransfer of entitlementTransfers) {
+        if (entitlementTransfer.entitlementId === quest.questID && entitlementTransfer.txStatus) {
           wrappedItem.isTransferred = true;
-          wrappedItem.transfer = transfer;
+          wrappedItem.transfer = entitlementTransfer;
         }
       }
 

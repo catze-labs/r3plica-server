@@ -20,8 +20,8 @@ const entitlementTransfer = {
   updated: { type: "string", format: "date-time" },
 };
 
-export const getTransferResponse = {
-  description: "Return item, entitlement transfer record",
+export const getTransferHistoryResponse = {
+  description: "Return item, entitlement transfer records",
   status: 200,
   schema: {
     type: "object",

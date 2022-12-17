@@ -138,9 +138,9 @@ export const linkWalletApiResponse = {
   },
 };
 
-export const inventoryApiResponse = {
+export const itemsApiResponse = {
   status: 200,
-  description: "Get User in-game inventory items",
+  description: "Get User in-game items",
   schema: {
     type: "object",
     properties: {
