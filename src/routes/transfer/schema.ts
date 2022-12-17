@@ -21,7 +21,7 @@ const entitlementTransfer = {
 };
 
 export const getTransferHistoryResponse = {
-  description: "Return item, entitlement transfer record",
+  description: "Return item, entitlement transfer records",
   status: 200,
   schema: {
     type: "object",

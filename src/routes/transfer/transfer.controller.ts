@@ -6,7 +6,7 @@ import { TransferFsbtRequestDto } from "./dto/transfer-fsbt-request.dto";
 import { TransferFsbtDto } from "./dto/transfer-fsbt.dto";
 import { getTransferHistoryResponse, postTransferResponse } from "./schema";
 
-@Controller("transfer")
+@Controller("")
 @ApiTags("Transfer")
 export class TransferController {
   constructor(
@@ -15,7 +15,7 @@ export class TransferController {
   ) {
   }
 
-  @Get()
+  @Get("transfer-history")
   @ApiResponse(getTransferHistoryResponse)
   async getTransferHistory(@Query() transferFsbtDto: TransferFsbtDto) {
     const { sessionTicket } = transferFsbtDto;
@@ -29,7 +29,7 @@ export class TransferController {
   }
 
   // TODO : Add ApiResponse
-  @Post()
+  @Post("transfer")
   @ApiResponse(postTransferResponse)
   async transferFsbtToUser(
     @Body() transferFsbtRequestDto: TransferFsbtRequestDto
