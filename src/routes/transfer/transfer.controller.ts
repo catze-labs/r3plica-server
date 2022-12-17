@@ -4,7 +4,7 @@ import { PlayFabService } from "src/services/playfab/playfab.service";
 import { Web3Service } from "src/web3.service";
 import { TransferFsbtRequestDto } from "./dto/transfer-fsbt-request.dto";
 import { TransferFsbtDto } from "./dto/transfer-fsbt.dto";
-import { getTransferResponse, postTransferResponse } from "./schema";
+import { getTransferHistoryResponse, postTransferResponse } from "./schema";
 
 @Controller("transfer")
 @ApiTags("Transfer")
@@ -16,8 +16,8 @@ export class TransferController {
   }
 
   @Get()
-  @ApiResponse(getTransferResponse)
-  async getTransfers(@Query() transferFsbtDto: TransferFsbtDto) {
+  @ApiResponse(getTransferHistoryResponse)
+  async getTransferHistory(@Query() transferFsbtDto: TransferFsbtDto) {
     const { sessionTicket } = transferFsbtDto;
 
     const userInfo =
