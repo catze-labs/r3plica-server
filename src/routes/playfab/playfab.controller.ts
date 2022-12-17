@@ -13,13 +13,15 @@ import {
   loginApiResponse,
   registerApiResponse,
 } from "./schema";
+
 @Controller("playfab")
 @ApiTags("PlayFab")
 export class PlayFabController {
   constructor(
     private readonly PlayFabService: PlayFabService,
     private readonly web3Service: Web3Service
-  ) {}
+  ) {
+  }
 
   @Post("register")
   @ApiResponse(registerApiResponse)

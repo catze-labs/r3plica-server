@@ -2,12 +2,14 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { NonceService } from "../nonce/nonce.service";
 import { verifyMessage } from "@ethersproject/wallet";
+
 @Injectable()
 export class SignatureService {
   constructor(
     private readonly nonceService: NonceService,
     private readonly prismaService: PrismaService
-  ) {}
+  ) {
+  }
 
   public async validateUserAddress(
     apiCallerAddress: string | undefined,

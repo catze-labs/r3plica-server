@@ -5,7 +5,8 @@ import { Md5 } from "ts-md5";
 
 @Injectable()
 export class NonceService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {
+  }
 
   async createAndGetNonce(walletAddress: string) {
     const randomStr: string = Md5.hashStr(

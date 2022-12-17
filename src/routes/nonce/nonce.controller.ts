@@ -7,7 +7,8 @@ import { nonceApiResponse } from "./schema";
 @Controller("nonce")
 @ApiTags("Nonce")
 export class NonceController {
-  constructor(private readonly nonceService: NonceService) {}
+  constructor(private readonly nonceService: NonceService) {
+  }
 
   @Post()
   @ApiResponse(nonceApiResponse)

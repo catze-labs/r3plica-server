@@ -14,4 +14,5 @@ import { ServicesModule } from "src/services/services.module";
     TransferController,
   ],
 })
-export class RoutesModule {}
+export class RoutesModule {
+}
