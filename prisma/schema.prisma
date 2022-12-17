@@ -44,7 +44,7 @@ model itemTransfer {
   id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
-  item            Json
+  itemId          Int
   playFabId       String
   tokenId         String?
   contractAddress String
@@ -57,7 +57,7 @@ model entitlementTransfer {
   id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
-  entitlement     Json
+  entitlementId   Int
   playFabId       String
   tokenId         String?
   contractAddress String

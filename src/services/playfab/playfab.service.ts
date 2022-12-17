@@ -197,7 +197,7 @@ export class PlayFabService {
 
       // Compare transferred item to user already have item
       for (let itemTransfer of itemTransfers) {
-        if (itemTransfer.item["itemId"] === userItem.itemID) {
+        if (itemTransfer.itemId === userItem.itemID && itemTransfer.txStatus) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = itemTransfer;
         }
@@ -233,28 +233,28 @@ export class PlayFabService {
     }
 
     // Parsing axios response data
-    let list: UserEntitlement[] =
+    let userEntitlements: UserEntitlement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
-    const userEntitlementTransferList =
+    const entitlementTransfers =
       await this.prismaService.entitlementTransfer.findMany({
         where: {
           playFabId,
         },
       });
 
-    return list.map((quest) => {
+    return userEntitlements.map((quest) => {
       const wrappedItem: UserEntitlementWrapper = {
         ...quest,
         isTransferred: false,
         transfer: null,
       };
 
-      for (let transfer of userEntitlementTransferList) {
-        if (transfer.entitlement["questId"] === quest.questID) {
+      for (let entitlementTransfer of entitlementTransfers) {
+        if (entitlementTransfer.entitlementId === quest.questID && entitlementTransfer.txStatus) {
           wrappedItem.isTransferred = true;
-          wrappedItem.transfer = transfer;
+          wrappedItem.transfer = entitlementTransfer;
         }
       }
 
