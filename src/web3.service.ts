@@ -6,7 +6,6 @@ import {
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
-  PRIVATE_KEY,
   TESTNET_IMPL_CONTRACT_ABI,
   TESTNET_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
@@ -123,12 +122,14 @@ export class Web3Service {
 
     try {
       // Sign the transaction
-      this.web3.eth.accounts.signTransaction(tx, PRIVATE_KEY).then((signed) => {
-        // TODO : Insert Transfer row in DB
-        this.web3.eth
-          .sendSignedTransaction(signed.rawTransaction)
-          .on("receipt", console.log);
-      });
+      this.web3.eth.accounts
+        .signTransaction(tx, process.env.CONTRACT_PRIVATE_KEY)
+        .then((signed) => {
+          // TODO : Insert Transfer row in DB
+          this.web3.eth
+            .sendSignedTransaction(signed.rawTransaction)
+            .on("receipt", console.log);
+        });
     } catch (err) {
       console.log(err);
     }
