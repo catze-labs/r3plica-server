@@ -144,7 +144,7 @@ export const inventoryApiResponse = {
   schema: {
     type: "object",
     properties: {
-      list: {
+      items: {
         type: "array",
         items: {
           type: "object",
