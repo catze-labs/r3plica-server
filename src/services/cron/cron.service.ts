@@ -3,6 +3,8 @@ import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import { TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS, TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
+import axios from "axios";
+import { axiosReturnOrThrow } from "../../utils";
 
 @Injectable()
 export class CronService {
@@ -15,12 +17,74 @@ export class CronService {
   }
 
   @Cron("*/3 * * * *")
-  async indexerCron() {
-    // TODO : Indexer logic here
-    this.logger.debug(`Indexer Running ${new Date().toString()}`);
+  async updateTransactionStatus() {
+    const itemTransfers = await this.prismaService.itemTransfer.findMany({
+      where: {
+        txStatus: null
+      }
+    });
 
-    // await this.prismaService.itemToken.create({});
-    // await this.prismaService.entitlementToken.create({});
+    for (const itemTransfer of itemTransfers) {
+      const url = "https://api-testnet.bscscan.com/api" +
+        "?module=transaction" +
+        "&action=gettxreceiptstatus" +
+        "&txhash=" + itemTransfer.txHash +
+        "&apikey=" + process.env.BSCAN_API_KEY;
+
+      // Send get request
+      let response: any;
+      try {
+        const { data } = await axios.get(url);
+
+        response = data;
+      } catch (error) {
+        response = error.response;
+      }
+
+      const parsedData = axiosReturnOrThrow(response);
+      await this.prismaService.itemTransfer.update({
+        where: {
+          id: itemTransfer.id
+        },
+        data: {
+          txStatus: parsedData["result"]["status"] == "1"
+        }
+      });
+    }
+
+    const entitlementTransfers = await this.prismaService.entitlementTransfer.findMany({
+      where: {
+        txStatus: null
+      }
+    });
+
+    for (const entitlementTransfer of entitlementTransfers) {
+      const url = "https://api-testnet.bscscan.com/api" +
+        "?module=transaction" +
+        "&action=gettxreceiptstatus" +
+        "&txhash=" + entitlementTransfer.txHash +
+        "&apikey=" + process.env.BSCAN_API_KEY;
+
+      // Send get request
+      let response: any;
+      try {
+        const { data } = await axios.get(url);
+
+        response = data;
+      } catch (error) {
+        response = error.response;
+      }
+
+      const parsedData = axiosReturnOrThrow(response);
+      await this.prismaService.itemTransfer.update({
+        where: {
+          id: entitlementTransfer.id
+        },
+        data: {
+          txStatus: parsedData["result"]["status"] == "1"
+        }
+      });
+    }
   }
 
   @Cron("*/3 * * * *")
