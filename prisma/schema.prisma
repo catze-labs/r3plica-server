@@ -68,8 +68,8 @@ model itemToken {
   tokenId         String   @id
   itemId          Int
   contractAddress String
-  playFabId       String
-  user            user     @relation(fields: [playFabId], references: [playFabId])
+  playFabId       String?
+  user            user?    @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
@@ -78,8 +78,8 @@ model entitlementToken {
   tokenId         String   @id
   entitlementId   Int
   contractAddress String
-  playFabId       String
-  user            user     @relation(fields: [playFabId], references: [playFabId])
+  playFabId       String?
+  user            user?    @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
