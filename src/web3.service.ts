@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import { PrismaService } from "./prisma.service";
@@ -14,7 +14,18 @@ export class Web3Service {
   constructor(
     private prismaService: PrismaService,
     private playFabService: PlayFabService
-  ) {
+  ) {}
+
+  async getItemTokenMetadata(id: string) {
+    // TODO : return token metadata
+  }
+
+  async getEntitlementTokenMetadata(id: string) {
+    // TODO : return token metadata
+  }
+
+  async getProfileTokenMetadata(id: string) {
+    // TODO : return token metadata
   }
 
   async getFsbtTransferList(playFabId: string) {
