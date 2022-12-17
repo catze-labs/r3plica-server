@@ -173,10 +173,10 @@ export class PlayFabService {
     }
 
     // Parsing axios response data
-    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
+    let userItems: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
-    const userItemTransferList = await this.prismaService.itemTransfer.findMany(
+    const itemTransfers = await this.prismaService.itemTransfer.findMany(
       {
         where: {
           playFabId,
@@ -184,22 +184,22 @@ export class PlayFabService {
       }
     );
 
-    list = list.filter(
-      (item) => item.rarity === "Epic" || item.rarity === "Legendary"
+    userItems = userItems.filter(
+      (userItem) => userItem.rarity === "Epic" || userItem.rarity === "Legendary"
     );
 
-    return list.map((item) => {
+    return userItems.map((userItem) => {
       const wrappedItem: UserItemWrapper = {
-        ...item,
+        ...userItem,
         isTransferred: false,
         transfer: null,
       };
 
       // Compare transferred item to user already have item
-      for (let transfer of userItemTransferList) {
-        if (transfer.item["itemId"] === item.itemID) {
+      for (let itemTransfer of itemTransfers) {
+        if (itemTransfer.item["itemId"] === userItem.itemID) {
           wrappedItem.isTransferred = true;
-          wrappedItem.transfer = transfer;
+          wrappedItem.transfer = itemTransfer;
         }
       }
 
