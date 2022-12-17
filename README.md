@@ -1,6 +1,6 @@
 # r3plica Backend Repository
 
-## Description
+## Introduction
 
 This repository is `r3plica` backend that participated in `BNB Chain innovation hackathon 2022`
 
