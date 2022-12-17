@@ -179,6 +179,9 @@ export class PlayFabService {
       response = error.response;
     }
 
+    // parsing axios response data
+    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"];
+
     // transfer history
     const userItemTransferList = await this.prismaService.itemTransfer.findMany(
       {
@@ -188,24 +191,20 @@ export class PlayFabService {
       }
     );
 
-    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"];
-
     list = list.filter(
       (item) => item.rarity === "Epic" || item.rarity === "Legendary"
     );
 
     return list.map((item) => {
-      const itemId = item.itemID;
       const wrappedItem: UserItemWrapper = {
         ...item,
         isTransferred: false,
         transfer: null,
       };
 
+      // 유저가 transfer 한 아이템과 현재 가지고 있는 아이템을 비교해서 wrapping 함
       for (let transfer of userItemTransferList) {
-        const transferItem = transfer.item;
-
-        if (transferItem["itemId"] === itemId) {
+        if (transfer.item["itemId"] === item.itemID) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = transfer;
         }
@@ -240,6 +239,10 @@ export class PlayFabService {
       response = error.response;
     }
 
+    // parsing axios response data
+    let list: UserEntitlement[] =
+      axiosReturnOrThrow(response)["FunctionResult"];
+
     // transfer history
     const userEntitlementTransferList =
       await this.prismaService.entitlementTransfer.findMany({
@@ -248,11 +251,7 @@ export class PlayFabService {
         },
       });
 
-    let list: UserEntitlement[] =
-      axiosReturnOrThrow(response)["FunctionResult"];
-
     const wrappedList: UserEntitlementWrapper[] = list.map((quest) => {
-      const questId = quest.questID;
       const wrappedItem: UserEntitlementWrapper = {
         ...quest,
         isTransferred: false,
@@ -260,9 +259,7 @@ export class PlayFabService {
       };
 
       for (let transfer of userEntitlementTransferList) {
-        const transferEntitlement = transfer.entitlement;
-
-        if (transferEntitlement["questId"] === questId) {
+        if (transfer.entitlement["questId"] === quest.questID) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = transfer;
         }
