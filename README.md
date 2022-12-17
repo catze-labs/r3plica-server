@@ -1,29 +1,29 @@
-# r3plica Backend Repository
+# r3plica Server Repository
 
 ## Introduction
 
-This repository is `r3plica` backend that participated in `BNB Chain innovation hackathon 2022`
+This repository is `r3plica` server that participated in [`BNB Chain Innovation Hackathon 2022 - Seoul`](https://www.bnbchain.org/en/kr-hackathon) 
 
-Our backend server implemented based on [`Nest`](https://github.com/nestjs/nest) & [`Prisma ORM`](https://www.prisma.io).  
-Also, for interact with block-chain, We use `web3.js` & `@ethersproject/wallet` library.
+Our server implemented based on [`Nest`](https://github.com/nestjs/nest) & [`Prisma ORM`](https://www.prisma.io).  
+For interacting with blockchain, we use `web3.js` & `@ethersproject/wallet` library.
 
 ## Tech Stack
 
-### Language stack
+### Language
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?&style=for-the-badge&logo=TypeScript&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-f7df12.svg?&style=for-the-badge&logo=JavaScript&logoColor=black)
 
-### Frameworks
+### Framework
 
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E.svg?&style=for-the-badge&logo=NestJS&logoColor=white)
 
-### Database
+### Database & ORM
 
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1.svg?&style=for-the-badge&logo=MySQL&logoColor=white)
 ![PrismaORM](https://img.shields.io/badge/Prisma-2D3748.svg?&style=for-the-badge&logo=Prisma&logoColor=white)
 
-### Core Libraries
+### Core Library
 
 ![Web3.js](https://img.shields.io/badge/Web3.js-F16822.svg?&style=for-the-badge&logo=Web3.js&logoColor=white)
 
@@ -31,14 +31,18 @@ Also, for interact with block-chain, We use `web3.js` & `@ethersproject/wallet` 
 
 ## Installation
 
+---
+
 ```bash
 # Install dependencies
 $ yarn
 ```
 
-## Running the app
+## How to run
 
-Before running server, You need `.env` file in root directory.  
+---
+
+Before running server, you need `.env` file in root directory.  
 Please make `.env` file.  
 <br/>
 
@@ -63,7 +67,7 @@ Running commands:
 
 ```bash
 # DB Setting
-# Before run this command, You have to fill .env file first.
+# Before run this command, you have to fill .env file first.
 yarn db-setup
 
 
@@ -81,25 +85,30 @@ $ npm run start:prod
 <br/>
 
 If you run server successfully,
-You can see Swagger API document page in [http://localhost:8081/docs](http://localhost:8081/docs)
+you can see Swagger API document in [http://localhost:8081/docs](http://localhost:8081/docs)
 
 ## Support
 
-This repository is part of r3plica project SDK.  
-Another repository link down below;
+---
 
-- [Frontend(NextJS)](https://github.com/catze-labs/r3plica-web)
-- [Unity](https://github.com/catze-labs/r3plica-unity)
-- [PlayFab CloudScript (JS ES6)](https://github.com/root-catze/r3plica-playfab)
+This repository a is part of r3plica project SDK.  
+Another repository links are down below;
 
-## Stay in touch
+- [r3plica-web: Frontend(NextJS)](https://github.com/catze-labs/r3plica-web)
+- [r3plica-unity: Unity](https://github.com/catze-labs/r3plica-unity)
+- [r3plica-playfab: PlayFab CloudScript (JS ES6)](https://github.com/root-catze/r3plica-playfab)
 
-- FE developer - [Aiden](https://www.twitter.com/aiiiden0)
-- BE developer - [Phantola](https://www.twitter.com/phantola_catze)
-- SC developer - [EK](https://www.twitter.com/JustDoEK)
-- Unity developer - [Thon](thon@catze.xyz)
-- Dev-ops - [Philip](https://www.twitter.com/mg_nomad)
+## Contact
+
+---
+- FE developer - Aiden [twitter](https://www.twitter.com/aiiiden0)
+- BE developer - Phantola [twitter](https://www.twitter.com/phantola_catze)
+- SC developer - EK [twitter](https://www.twitter.com/JustDoEK)
+- Unity developer - Thon [email](mailto:thon@catze.xyz)
+- Dev-ops - Philip [twitter](https://www.twitter.com/mg_nomad)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+---
+
+[MIT licensed](LICENSE)
