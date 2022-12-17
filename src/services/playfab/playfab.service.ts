@@ -5,6 +5,12 @@ import {
 } from "@nestjs/common";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
+import {
+  UserEntitlement,
+  UserEntitlementWrapper,
+  UserItem,
+  UserItemWrapper,
+} from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
@@ -146,5 +152,125 @@ export class PlayFabService {
         walletAddress: userAddress,
       },
     });
+  }
+
+  async getUserItems(playFabId: string) {
+    const path = "/Server/ExecuteCloudScript";
+
+    const params = {
+      FunctionName: "getPlayerItems",
+      PlayFabId: playFabId,
+      GeneratePlayStreamEvent: true,
+    };
+
+    let response: any;
+    try {
+      const { data } = await axios.post(
+        process.env.PLAY_FAB_HOST + path,
+        params,
+        {
+          headers: {
+            "X-SecretKey": process.env.PLAY_FAB_X_SECRET_KEY,
+          },
+        }
+      );
+      response = data;
+    } catch (error) {
+      response = error.response;
+    }
+
+    // transfer history
+    const userItemTransferList = await this.prismaService.itemTransfer.findMany(
+      {
+        where: {
+          playFabId,
+        },
+      }
+    );
+
+    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"];
+
+    list = list.filter(
+      (item) => item.rarity === "Epic" || item.rarity === "Legendary"
+    );
+
+    return list.map((item) => {
+      const itemId = item.itemID;
+      const wrappedItem: UserItemWrapper = {
+        ...item,
+        isTransferred: false,
+        transfer: null,
+      };
+
+      for (let transfer of userItemTransferList) {
+        const transferItem = transfer.item;
+
+        if (transferItem["itemId"] === itemId) {
+          wrappedItem.isTransferred = true;
+          wrappedItem.transfer = transfer;
+        }
+      }
+
+      return wrappedItem;
+    });
+  }
+
+  async getUserEntitlements(playFabId: string) {
+    const path = "/Server/ExecuteCloudScript";
+
+    const params = {
+      FunctionName: "getPlayerEntitlements",
+      PlayFabId: playFabId,
+      GeneratePlayStreamEvent: true,
+    };
+
+    let response: any;
+    try {
+      const { data } = await axios.post(
+        process.env.PLAY_FAB_HOST + path,
+        params,
+        {
+          headers: {
+            "X-SecretKey": process.env.PLAY_FAB_X_SECRET_KEY,
+          },
+        }
+      );
+      response = data;
+    } catch (error) {
+      response = error.response;
+    }
+
+    // transfer history
+    const userEntitlementTransferList =
+      await this.prismaService.entitlementTransfer.findMany({
+        where: {
+          playFabId,
+        },
+      });
+
+    let list: UserEntitlement[] =
+      axiosReturnOrThrow(response)["FunctionResult"];
+
+    const wrappedList: UserEntitlementWrapper[] = list.map((quest) => {
+      const questId = quest.questID;
+      const wrappedItem: UserEntitlementWrapper = {
+        ...quest,
+        isTransferred: false,
+        transfer: null,
+      };
+
+      for (let transfer of userEntitlementTransferList) {
+        const transferEntitlement = transfer.entitlement;
+
+        if (transferEntitlement["questId"] === questId) {
+          wrappedItem.isTransferred = true;
+          wrappedItem.transfer = transfer;
+        }
+      }
+
+      return wrappedItem;
+    });
+
+    return wrappedList;
   }
 }

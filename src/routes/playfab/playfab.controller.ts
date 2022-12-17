@@ -3,9 +3,12 @@ import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PlayFabService } from "src/services/playfab/playfab.service";
 import { Web3Service } from "src/web3.service";
 import { PatchUserWalletDto } from "./dto/patch-user-wallet.dto";
+import { PlayFabRequestDto } from "./dto/playfab-request.dto";
 import { UserLoginDto } from "./dto/user-login.dto";
 import { UserRegisterDto } from "./dto/user-register.dto";
 import {
+  entitlementsApiResponse,
+  inventoryApiResponse,
   linkWalletApiResponse,
   loginApiResponse,
   registerApiResponse,
@@ -47,5 +50,31 @@ export class PlayFabController {
       walletAddress,
       signature
     );
+  }
+
+  @Get("inventory")
+  @ApiResponse(inventoryApiResponse)
+  async getInventory(@Query() playFabRequestDto: PlayFabRequestDto) {
+    const { sessionTicket } = playFabRequestDto;
+    const userInfo =
+      await this.PlayFabService.validateAndGetUserInfoBySessionTicket(
+        sessionTicket
+      );
+
+    return { list: await this.PlayFabService.getUserItems(userInfo.PlayFabId) };
+  }
+
+  @Get("entitlements")
+  @ApiResponse(entitlementsApiResponse)
+  async getEntitlements(@Query() playFabRequestDto: PlayFabRequestDto) {
+    const { sessionTicket } = playFabRequestDto;
+    const userInfo =
+      await this.PlayFabService.validateAndGetUserInfoBySessionTicket(
+        sessionTicket
+      );
+
+    return {
+      list: await this.PlayFabService.getUserEntitlements(userInfo.PlayFabId),
+    };
   }
 }
