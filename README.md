@@ -31,16 +31,12 @@ For interacting with blockchain, we use `web3.js` & `@ethersproject/wallet` libr
 
 ## Installation
 
----
-
 ```bash
 # Install dependencies
 $ yarn
 ```
 
 ## How to run
-
----
 
 Before running server, you need `.env` file in root directory.  
 Please make `.env` file.  
@@ -89,8 +85,6 @@ you can see Swagger API document in [http://localhost:8081/docs](http://localhos
 
 ## Support
 
----
-
 This repository a is part of r3plica project SDK.  
 Another repository links are down below;
 
@@ -100,7 +94,6 @@ Another repository links are down below;
 
 ## Contact
 
----
 - FE developer - Aiden [twitter](https://www.twitter.com/aiiiden0)
 - BE developer - Phantola [twitter](https://www.twitter.com/phantola_catze)
 - SC developer - EK [twitter](https://www.twitter.com/JustDoEK)
@@ -108,7 +101,5 @@ Another repository links are down below;
 - Dev-ops - Philip [twitter](https://www.twitter.com/mg_nomad)
 
 ## License
-
----
 
 [MIT licensed](LICENSE)
