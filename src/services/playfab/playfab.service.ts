@@ -180,7 +180,7 @@ export class PlayFabService {
     }
 
     // parsing axios response data
-    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"];
+    let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // transfer history
     const userItemTransferList = await this.prismaService.itemTransfer.findMany(
@@ -241,7 +241,7 @@ export class PlayFabService {
 
     // parsing axios response data
     let list: UserEntitlement[] =
-      axiosReturnOrThrow(response)["FunctionResult"];
+      axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // transfer history
     const userEntitlementTransferList =
