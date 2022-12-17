@@ -1,7 +1,16 @@
-import { BadRequestException, Injectable, UnauthorizedException, } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
-import { UserEntitlement, UserEntitlementWrapper, UserItem, UserItemWrapper, } from "src/types";
+import {
+  UserEntitlement,
+  UserEntitlementWrapper,
+  UserItem,
+  UserItemWrapper,
+} from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
@@ -12,8 +21,7 @@ export class PlayFabService {
     private readonly prismaService: PrismaService,
     private readonly signatureService: SignatureService,
     private readonly userService: UserService
-  ) {
-  }
+  ) {}
 
   async validateEmail(email: string) {
     const count = await this.prismaService.user.count({
@@ -36,7 +44,7 @@ export class PlayFabService {
       SessionTicket: sessionTicket,
     };
 
-    // post 요청
+    // Request post request
     let response: any;
     try {
       const { data } = await axios.post(
@@ -56,7 +64,7 @@ export class PlayFabService {
 
     const parsedData = axiosReturnOrThrow(response);
 
-    // 세션 티켓이 만료되었는지 확인
+    // Check sessionTicket Expired
     if (parsedData["IsSessionTicketExpired"]) {
       throw new UnauthorizedException({
         message: "Session ticket expired",
@@ -66,7 +74,7 @@ export class PlayFabService {
 
     const playFabId = parsedData.UserInfo.PlayFabId;
 
-    // 유저가 존재하는지 확인
+    // Check exist user
     await this.userService.getUser(playFabId);
 
     return parsedData.UserInfo;
@@ -194,7 +202,7 @@ export class PlayFabService {
         transfer: null,
       };
 
-      // 유저가 transfer 한 아이템과 현재 가지고 있는 아이템을 비교해서 wrapping 함
+      // Compare transferred item to user already have item
       for (let transfer of userItemTransferList) {
         if (transfer.item["itemId"] === item.itemID) {
           wrappedItem.isTransferred = true;
