@@ -44,7 +44,7 @@ export class PlayFabService {
       SessionTicket: sessionTicket,
     };
 
-    // Request post request
+    // Send post request
     let response: any;
     try {
       const { data } = await axios.post(
@@ -64,7 +64,7 @@ export class PlayFabService {
 
     const parsedData = axiosReturnOrThrow(response);
 
-    // Check sessionTicket Expired
+    // Check sessionTicket expiry
     if (parsedData["IsSessionTicketExpired"]) {
       throw new UnauthorizedException({
         message: "Session ticket expired",
@@ -74,7 +74,7 @@ export class PlayFabService {
 
     const playFabId = parsedData.UserInfo.PlayFabId;
 
-    // Check exist user
+    // Check user existence
     await this.userService.getUser(playFabId);
 
     return parsedData.UserInfo;
@@ -179,10 +179,10 @@ export class PlayFabService {
       response = error.response;
     }
 
-    // parsing axios response data
+    // Parsing axios response data
     let list: UserItem[] = axiosReturnOrThrow(response)["FunctionResult"] || [];
 
-    // transfer history
+    // Transfer history
     const userItemTransferList = await this.prismaService.itemTransfer.findMany(
       {
         where: {
@@ -239,11 +239,11 @@ export class PlayFabService {
       response = error.response;
     }
 
-    // parsing axios response data
+    // Parsing axios response data
     let list: UserEntitlement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
-    // transfer history
+    // Transfer history
     const userEntitlementTransferList =
       await this.prismaService.entitlementTransfer.findMany({
         where: {

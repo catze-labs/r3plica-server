@@ -100,7 +100,7 @@ export class Web3Service {
       }
     }
 
-    // call contract
+    // Call contract
     const contract = new this.web3.eth.Contract(
       TESTNET_IMPL_CONTRACT_ABI,
       TESTNET_PROXY_CONTRACT_ADDRESS
