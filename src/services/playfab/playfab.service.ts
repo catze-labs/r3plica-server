@@ -1,16 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException, } from "@nestjs/common";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
-import {
-  UserEntitlement,
-  UserEntitlementWrapper,
-  UserItem,
-  UserItemWrapper,
-} from "src/types";
+import { UserEntitlement, UserEntitlementWrapper, UserItem, UserItemWrapper, } from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
@@ -21,7 +12,8 @@ export class PlayFabService {
     private readonly prismaService: PrismaService,
     private readonly signatureService: SignatureService,
     private readonly userService: UserService
-  ) {}
+  ) {
+  }
 
   async validateEmail(email: string) {
     const count = await this.prismaService.user.count({

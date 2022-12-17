@@ -1,14 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
-import {
-  TESTNET_IMPL_CONTRACT_ABI,
-  TESTNET_PROXY_CONTRACT_ADDRESS,
-} from "./constants";
+import { TESTNET_IMPL_CONTRACT_ABI, TESTNET_PROXY_CONTRACT_ADDRESS, } from "./constants";
 import { PrismaService } from "./prisma.service";
 import { PlayFabService } from "./services/playfab/playfab.service";
 
@@ -22,7 +15,8 @@ export class Web3Service {
   constructor(
     private prismaService: PrismaService,
     private playFabService: PlayFabService
-  ) {}
+  ) {
+  }
 
   async getFsbtTransferList(playFabId: string) {
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
@@ -123,7 +117,7 @@ export class Web3Service {
     try {
       // Sign the transaction
       this.web3.eth.accounts
-        .signTransaction(tx, process.env.CONTRACT_PRIVATE_KEY)
+        .signTransaction(tx, process.env.PRIVATE_KEY)
         .then((signed) => {
           // TODO : Insert Transfer row in DB
           this.web3.eth

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Patch, Post, Query, } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PlayFabService } from "src/services/playfab/playfab.service";
 import { PatchUserWalletDto } from "./dto/patch-user-wallet.dto";
@@ -24,7 +16,8 @@ import {
 @Controller("playfab")
 @ApiTags("PlayFab")
 export class PlayFabController {
-  constructor(private readonly PlayFabService: PlayFabService) {}
+  constructor(private readonly PlayFabService: PlayFabService) {
+  }
 
   @Post("register")
   @ApiResponse(registerApiResponse)

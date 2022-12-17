@@ -6,13 +6,13 @@ import { TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS, TESTNET_QFSBT_PROXY_CONTRACT_ADDR
 
 @Injectable()
 export class CronService {
+  private readonly logger = new Logger(CronService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly playFabService: PlayFabService
   ) {
   }
-
-  private readonly logger = new Logger(CronService.name);
 
   @Cron("*/3 * * * *")
   async indexerCron() {
