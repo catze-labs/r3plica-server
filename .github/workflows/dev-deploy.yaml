@@ -7,7 +7,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      ECR_REPOSITORY_NAME: replica-server
+      ECR_REPOSITORY_NAME: r3plica-server
       DOCKER_BUILDKIT: 1
     steps:
       - name: Check out code
