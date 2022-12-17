@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  playFabId     String   @id
+  email         String   @unique
+  walletAddress String?
+  created       DateTime @default(now()) @db.DateTime(6)
+  updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
+
+  itemTransfers        itemTransfer[]
+  entitlementTransfers entitlementTransfer[]
+}
+
+model nonce {
+  id      Int      @id @default(autoincrement())
+  created DateTime @default(now()) @db.DateTime(6)
+  updated DateTime @default(now()) @updatedAt @db.DateTime(6)
+  address String
+  value   String
+  used    Boolean  @default(false)
+
+  @@index([address])
+}
+
+model latestBlock {
+  number  Int      @id
+  created DateTime @default(now()) @db.DateTime(6)
+  updated DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model itemTransfer {
+  id              Int      @id
+  txHash          String
+  item            Json
+  playFabId       String
+  tokenId         String?
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model entitlementTransfer {
+  id              Int      @id
+  txHash          String
+  entitlement     Json
+  playFabId       String
+  tokenId         String?
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
