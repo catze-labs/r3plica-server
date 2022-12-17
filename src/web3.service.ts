@@ -59,73 +59,45 @@ export class Web3Service {
     const walletAddress = user.walletAddress;
     if (!walletAddress) {
       throw new NotFoundException({
-        message: "User wallet not registered",
+        message: "User wallet is not linked",
         playFabId,
       });
     }
 
-    // Get Item List and Check all items are transferable
-    const itemList = await this.playFabService.getUserItems(user.playFabId);
-    for (let item of itemList) {
-      const isTransferable =
-        itemIds.find((v) => v === item.itemID) && item.isTransferred === false;
-
-      if (!isTransferable) {
-        throw new BadRequestException({
-          itemId: item.itemID,
-        });
-      }
-    }
-
-    // Get entitlements list and Check all entitlements are transferable
-    const entitlementsList = await this.playFabService.getUserEntitlements(
-      user.playFabId
-    );
-    for (let entitlement of entitlementsList) {
-      const isTransferable =
-        entitlementIds.find((v) => v === entitlement.questID) &&
-        entitlement.isTransferred === false;
-
-      if (!isTransferable) {
-        throw new BadRequestException({
-          entitlementId: entitlement.questID,
-        });
-      }
-    }
-
-    // Call contract
-    const contract = new this.web3.eth.Contract(
-      TESTNET_IMPL_CONTRACT_ABI,
-      TESTNET_PROXY_CONTRACT_ADDRESS
-    );
-
-    // TODO : Inject data in contract
-    // Encode the function call
-    const encoded = contract.methods.attest(walletAddress, 1).encodeABI();
-
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
-    // Create the transaction
-    const tx = {
-      gas: gasLimit,
-      to: TESTNET_PROXY_CONTRACT_ADDRESS,
-      data: encoded,
-    };
-
-    try {
-      // Sign the transaction
-      this.web3.eth.accounts
-        .signTransaction(tx, process.env.PRIVATE_KEY)
-        .then((signed) => {
-          // TODO : Insert Transfer row in DB
-          this.web3.eth
-            .sendSignedTransaction(signed.rawTransaction)
-            .on("receipt", console.log);
-        });
-    } catch (err) {
-      console.log(err);
-    }
+    // TODO: Call contract
+    //
+    // const contract = new this.web3.eth.Contract(
+    //   TESTNET_IMPL_CONTRACT_ABI,
+    //   TESTNET_PROXY_CONTRACT_ADDRESS
+    // );
+    //
+    // // TODO : Inject data in contract
+    // // Encode the function call
+    // const encoded = contract.methods.attest(walletAddress, 1).encodeABI();
+    //
+    // // Get the gas limit
+    // const block = await this.web3.eth.getBlock("latest");
+    // const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+    //
+    // // Create the transaction
+    // const tx = {
+    //   gas: gasLimit,
+    //   to: TESTNET_PROXY_CONTRACT_ADDRESS,
+    //   data: encoded,
+    // };
+    //
+    // try {
+    //   // Sign the transaction
+    //   this.web3.eth.accounts
+    //     .signTransaction(tx, process.env.PRIVATE_KEY)
+    //     .then((signed) => {
+    //       // TODO : Insert Transfer row in DB
+    //       this.web3.eth
+    //         .sendSignedTransaction(signed.rawTransaction)
+    //         .on("receipt", console.log);
+    //     });
+    // } catch (err) {
+    //   console.log(err);
+    // }
   }
 }
