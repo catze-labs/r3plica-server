@@ -7,7 +7,7 @@ import { UserLoginDto } from "./dto/user-login.dto";
 import { UserRegisterDto } from "./dto/user-register.dto";
 import {
   entitlementsApiResponse,
-  inventoryApiResponse,
+  itemsApiResponse,
   linkWalletApiResponse,
   loginApiResponse,
   registerApiResponse,
@@ -51,9 +51,9 @@ export class PlayFabController {
     );
   }
 
-  @Get("inventory")
-  @ApiResponse(inventoryApiResponse)
-  async getInventory(@Query() playFabRequestDto: PlayFabRequestDto) {
+  @Get("items")
+  @ApiResponse(itemsApiResponse)
+  async getItems(@Query() playFabRequestDto: PlayFabRequestDto) {
     const { sessionTicket } = playFabRequestDto;
     const userInfo =
       await this.PlayFabService.validateAndGetUserInfoBySessionTicket(
