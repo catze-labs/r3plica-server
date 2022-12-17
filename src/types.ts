@@ -14,11 +14,11 @@ export type UserItem = {
 };
 
 export enum EntitlementState {
-  "onGoing" = 0,
-  "complete" = 1,
-  "abandonned" = 2,
-  "failed" = 3,
-  "turnedIn" = 4,
+  "ON_GOING" = 0,
+  "COMPLETE" = 1,
+  "ABANDONED" = 2,
+  "FAILED" = 3,
+  "TURNED_IN" = 4,
 }
 
 export type UserEntitlement = {

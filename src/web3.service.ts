@@ -103,11 +103,11 @@ export class Web3Service {
     const encoded = contract.methods.attest(walletAddress, 1).encodeABI();
 
     // Get the gas limit
-    var block = await this.web3.eth.getBlock("latest");
-    var gasLimit = Math.round(block.gasLimit / block.transactions.length);
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
 
     // Create the transaction
-    var tx = {
+    const tx = {
       gas: gasLimit,
       to: TESTNET_PROXY_CONTRACT_ADDRESS,
       data: encoded,

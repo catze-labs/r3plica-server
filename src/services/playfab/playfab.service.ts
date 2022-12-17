@@ -243,7 +243,7 @@ export class PlayFabService {
         },
       });
 
-    const wrappedList: UserEntitlementWrapper[] = list.map((quest) => {
+    return list.map((quest) => {
       const wrappedItem: UserEntitlementWrapper = {
         ...quest,
         isTransferred: false,
@@ -259,7 +259,5 @@ export class PlayFabService {
 
       return wrappedItem;
     });
-
-    return wrappedList;
   }
 }
