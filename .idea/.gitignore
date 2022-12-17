@@ -138,3 +138,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+modules.xml
+vcs.xml
+r3plica-server.iml
