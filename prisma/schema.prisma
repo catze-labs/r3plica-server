@@ -41,7 +41,7 @@ model latestBlock {
 }
 
 model itemTransfer {
-  id              Int      @id
+  id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
   item            Json
@@ -54,7 +54,7 @@ model itemTransfer {
 }
 
 model entitlementTransfer {
-  id              Int      @id
+  id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
   entitlement     Json
