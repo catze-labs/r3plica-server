@@ -180,11 +180,15 @@ export class CronService {
         },
       });
 
+      // Mapping Items
       let items = await this.playFabService.getUserItems(user.playFabId);
       const itemIdCandidates = [31, 18, 27, 34];
+
       items = items.filter((item) => itemIdCandidates.includes(item.itemID));
+
       let itemTokenIds = [];
       let profileTokenIdsByItemTokenIds = [];
+
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
@@ -193,9 +197,11 @@ export class CronService {
             playFabId: null,
           },
         });
+
         if (!itemToken) continue;
-        itemTokenIds.push(Number(itemToken.tokenId));
-        profileTokenIdsByItemTokenIds.push(Number(profileToken.tokenId));
+
+        itemTokenIds.push(itemToken.tokenId);
+        profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
 
         await this.prismaService.itemToken.update({
           where: {
@@ -206,15 +212,18 @@ export class CronService {
           },
         });
       }
+
       await this.web3Service.bindItemIdsToProfileIds(
         itemTokenIds,
         profileTokenIdsByItemTokenIds
       );
 
+      // Mapping Achievements
       let achievements = await this.playFabService.getUserAchievements(
         user.playFabId
       );
       const questIdCandidates = [0, 1, 2, 3];
+
       achievements = achievements.filter(
         (achievement) =>
           questIdCandidates.includes(achievement.questID) &&
@@ -223,6 +232,7 @@ export class CronService {
 
       let achievementTokenIds = [];
       let profileTokenIdsByAchievementTokenIds = [];
+
       for (const achievement of achievements) {
         const achievementToken =
           await this.prismaService.achievementToken.findFirst({
@@ -232,9 +242,11 @@ export class CronService {
               playFabId: null,
             },
           });
+
         if (!achievementToken) continue;
-        achievementTokenIds.push(Number(achievementToken.tokenId));
-        profileTokenIdsByAchievementTokenIds.push(Number(profileToken.tokenId));
+
+        achievementTokenIds.push(achievementToken.tokenId);
+        profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
 
         await this.prismaService.achievementToken.update({
           where: {
@@ -245,9 +257,10 @@ export class CronService {
           },
         });
       }
+
       await this.web3Service.bindAchievementIdsToProfileIds(
-        achievementTokenIds,
-        profileTokenIdsByAchievementTokenIds
+        achievementTokenIds.map(String),
+        profileTokenIdsByAchievementTokenIds.map(String)
       );
     }
   }
