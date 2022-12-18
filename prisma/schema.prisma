@@ -21,6 +21,7 @@ model user {
   entitlementTransfers entitlementTransfer[]
   itemTokens           itemToken[]
   entitlementTokens    entitlementToken[]
+  profileTransfer      profileTransfer?
 }
 
 model nonce {
@@ -38,6 +39,17 @@ model latestBlock {
   number  Int      @id
   created DateTime @default(now()) @db.DateTime(6)
   updated DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model profileTransfer {
+  id              Int      @id @default(autoincrement())
+  txHash          String
+  txStatus        Boolean?
+  playFabId       String   @unique
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
 model itemTransfer {

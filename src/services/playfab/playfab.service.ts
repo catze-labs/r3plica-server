@@ -3,6 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
+import { user } from "@prisma/client";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
 import {
@@ -12,6 +13,7 @@ import {
   UserItemWrapper,
 } from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
+import { Web3Service } from "src/web3.service";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
 
@@ -20,7 +22,8 @@ export class PlayFabService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly signatureService: SignatureService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly web3Service: Web3Service
   ) {}
 
   async validateEmail(email: string) {
@@ -103,7 +106,7 @@ export class PlayFabService {
 
     const parsedData = axiosReturnOrThrow(response);
 
-    await this.prismaService.user.create({
+    const user: user = await this.prismaService.user.create({
       data: {
         playFabId: parsedData["PlayFabId"],
         email: email,
@@ -111,6 +114,7 @@ export class PlayFabService {
     });
 
     // TODO : contract call
+    await this.web3Service.mintPAFSBT(user);
     return parsedData;
   }
 

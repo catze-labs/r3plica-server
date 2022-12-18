@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
+import {
+  TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+  TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+} from "./constants";
 import { PrismaService } from "./prisma.service";
 import { PlayFabService } from "./services/playfab/playfab.service";
 
@@ -11,10 +15,7 @@ export class Web3Service {
   );
   private web3 = new Web3(this.provider);
 
-  constructor(
-    private prismaService: PrismaService,
-    private playFabService: PlayFabService
-  ) {}
+  constructor(private prismaService: PrismaService) {}
 
   async getItemTokenMetadata(id: string) {
     return this.prismaService.itemToken.findUnique({
@@ -126,5 +127,53 @@ export class Web3Service {
     // await this.prismaService.entitlementTransfer.create({
     //   data: {}
     // });
+  }
+
+  async mintPAFSBT(user: user) {
+    const contract = new this.web3.eth.Contract(
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    // TODO : Inject data in contract
+    // Encode the function call
+    const encoded = contract.methods
+      .attest(user.playFabId, user.created.valueOf().toString())
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
+    };
+
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+
+      await this.prismaService.profileTransfer.create({
+        data: {
+          playFabId: user.playFabId,
+          txHash: receipt.transactionHash,
+          contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+        },
+      });
+
+      Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
