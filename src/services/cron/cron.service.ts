@@ -125,48 +125,6 @@ export class CronService {
         },
       });
     }
-
-    // Update profile token - item token mapping tx status
-    const itemMappings = await this.prismaService.itemMapping.findMany({
-      where: {
-        txStatus: null,
-      },
-    });
-
-    for (const itemMapping of itemMappings) {
-      const parsedData = await this.getTransactionStatus(itemMapping.txHash);
-
-      await this.prismaService.itemMapping.update({
-        where: {
-          id: itemMapping.id,
-        },
-        data: {
-          txStatus: parsedData["status"] == "1",
-        },
-      });
-    }
-
-    // Update profile token - achievement token mapping tx status
-    const achievementMappings =
-      await this.prismaService.achievementMapping.findMany({
-        where: {
-          txStatus: null,
-        },
-      });
-
-    for (const achievementMapping of achievementMappings) {
-      const parsedData = await this.getTransactionStatus(
-        achievementMapping.txHash
-      );
-      await this.prismaService.achievementMapping.update({
-        where: {
-          id: achievementMapping.id,
-        },
-        data: {
-          txStatus: parsedData["status"] == "1",
-        },
-      });
-    }
   }
 
   @Cron("*/2 * * * *")
