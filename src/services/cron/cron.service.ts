@@ -176,6 +176,7 @@ export class CronService {
       });
 
       let items = await this.playFabService.getUserItems(user.playFabId);
+      this.logger.debug("items: ", items);
       const itemIdCandidates = [31, 18, 27, 34];
       items = items.filter((item) => itemIdCandidates.includes(item.itemID));
 
@@ -208,6 +209,7 @@ export class CronService {
       let achievements = await this.playFabService.getUserAchievements(
         user.playFabId
       );
+      this.logger.debug("achievements: ", achievements);
       const questIdCandidates = [0, 1, 2, 3];
       achievements = achievements.filter(
         (achievement) =>
