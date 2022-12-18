@@ -149,7 +149,7 @@ model profileMint {
   txHash          String
   txStatus        Boolean?
   playFabId       String
-  tokenId         String?
+  tokenId         String
   contractAddress String
   user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
