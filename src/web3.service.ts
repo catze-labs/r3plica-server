@@ -223,8 +223,8 @@ export class Web3Service {
     profileTokenIds: string[]
   ) {
     const contract = new this.web3.eth.Contract(
-      TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
-      TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods

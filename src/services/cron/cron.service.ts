@@ -22,7 +22,7 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  @Cron("*/3 * * * *")
+  @Cron("*/3 * * * * *")
   async updateTransactionStatus() {
     // Update profile mint tx status
     const profileMints: profileMint[] =
@@ -127,7 +127,7 @@ export class CronService {
     }
   }
 
-  @Cron("*/2 * * * *")
+  @Cron("*/2 * * * * *")
   async updateUserItemAndAchievement() {
     const users = await this.prismaService.user.findMany({});
 
