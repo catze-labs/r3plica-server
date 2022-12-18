@@ -158,6 +158,8 @@ export class PlayFabService {
         walletAddress: userAddress,
       },
     });
+
+    await this.web3Service.transferProfileFsbtToWallet(playFabId);
   }
 
   async getUserItems(playFabId: string) {
