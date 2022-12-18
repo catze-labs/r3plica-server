@@ -232,10 +232,13 @@ export class CronService {
     const users = await this.prismaService.user.findMany({
       include: {
         profileToken: true,
+        profileMint: true,
       },
     });
 
-    users.filter((user) => !user.profileToken);
+    users.filter(
+      (user) => !user.profileToken && user.profileMint["txStatus"] == false
+    );
 
     for (const user of users) {
       await this.web3Service.mintPAFSBT(user.playFabId);
