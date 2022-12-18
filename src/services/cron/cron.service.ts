@@ -57,6 +57,8 @@ export class CronService {
       });
       if (txStatus) {
         //  TODO: create profileToken record
+      } else {
+        //  TODO: retry - send profileMint tx again
       }
     }
 
