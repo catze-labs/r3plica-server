@@ -1,7 +1,7 @@
 import { AbiItem } from "web3-utils";
 
 export const TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x9211546312F8Cc02f85e24Aff13c115e325C1574";
+  "0xBd3F4BA8f7a91DF2cd50d887048628e7c6c569eD";
 export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -371,7 +371,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
       { internalType: "uint256", name: "key", type: "uint256" },
       { internalType: "uint256", name: "value", type: "uint256" },
     ],
-    name: "setItemIdsAndProfileId",
+    name: "setItemIdAndProfileId",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -390,7 +390,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
       { internalType: "uint256", name: "key", type: "uint256" },
       { internalType: "uint256", name: "value", type: "uint256" },
     ],
-    name: "setQuestIdsAndProfileId",
+    name: "setQuestIdAndProfileId",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
