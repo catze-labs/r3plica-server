@@ -256,7 +256,13 @@ export class Web3Service {
     }
   }
 
-  async mintPAFSBT(user: user) {
+  async mintPAFSBT(playFabId: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        playFabId,
+      },
+    });
+
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS

@@ -70,7 +70,7 @@ export class CronService {
           },
         });
       } else {
-        //  TODO: retry - send profileMint tx again
+        await this.web3Service.mintPAFSBT(profileMint.playFabId);
       }
     }
 
