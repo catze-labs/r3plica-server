@@ -39,10 +39,14 @@ export const getTransferHistoryResponse = {
 };
 
 export const postTransferResponse = {
-  description: "Return item, achievement transfer record",
+  description: "Return transfer transaction hash",
   status: 200,
   schema: {
     type: "object",
-    properties: {},
+    properties: {
+      txHash: {
+        type: "string",
+      },
+    },
   },
 };

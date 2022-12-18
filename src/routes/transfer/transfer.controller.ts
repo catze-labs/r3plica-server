@@ -27,7 +27,6 @@ export class TransferController {
     return await this.web3Service.getFsbtTransfers(userInfo.PlayFabId);
   }
 
-  // TODO : Add ApiResponse
   @Post("transfer")
   @ApiResponse(postTransferResponse)
   async transferFsbtToUser(
