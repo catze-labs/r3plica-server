@@ -20,8 +20,19 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  getBSCScanUrl(txHash: string) {
-    return `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
+  async getTransactionStatus(txHash: string) {
+    const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
+
+    let response: any;
+    try {
+      const { data } = await axios.get(url);
+
+      response = data;
+    } catch (error) {
+      response = error.response;
+    }
+
+    return axiosReturnOrThrow(response);
   }
 
   @Cron("*/3 * * * *")
@@ -34,19 +45,7 @@ export class CronService {
     });
 
     for (const profileMint of profileMints) {
-      const url = this.getBSCScanUrl(profileMint.txHash);
-
-      // Send get request
-      let response: any;
-      try {
-        const { data } = await axios.get(url);
-
-        response = data;
-      } catch (error) {
-        response = error.response;
-      }
-
-      const parsedData = axiosReturnOrThrow(response);
+      const parsedData = await this.getTransactionStatus(profileMint.txHash);
       await this.prismaService.profileMint.update({
         where: {
           id: profileMint.id,
@@ -65,19 +64,10 @@ export class CronService {
     });
 
     for (const profileTransfer of profileTransfers) {
-      const url = this.getBSCScanUrl(profileTransfer.txHash);
+      const parsedData = await this.getTransactionStatus(
+        profileTransfer.txHash
+      );
 
-      // Send get request
-      let response: any;
-      try {
-        const { data } = await axios.get(url);
-
-        response = data;
-      } catch (error) {
-        response = error.response;
-      }
-
-      const parsedData = axiosReturnOrThrow(response);
       await this.prismaService.profileTransfer.update({
         where: {
           id: profileTransfer.id,
@@ -96,19 +86,8 @@ export class CronService {
     });
 
     for (const itemTransfer of itemTransfers) {
-      const url = this.getBSCScanUrl(itemTransfer.txHash);
+      const parsedData = await this.getTransactionStatus(itemTransfer.txHash);
 
-      // Send get request
-      let response: any;
-      try {
-        const { data } = await axios.get(url);
-
-        response = data;
-      } catch (error) {
-        response = error.response;
-      }
-
-      const parsedData = axiosReturnOrThrow(response);
       await this.prismaService.itemTransfer.update({
         where: {
           id: itemTransfer.id,
@@ -128,22 +107,55 @@ export class CronService {
       });
 
     for (const entitlementTransfer of entitlementTransfers) {
-      const url = this.getBSCScanUrl(entitlementTransfer.txHash);
+      const parsedData = await this.getTransactionStatus(
+        entitlementTransfer.txHash
+      );
 
-      // Send get request
-      let response: any;
-      try {
-        const { data } = await axios.get(url);
-
-        response = data;
-      } catch (error) {
-        response = error.response;
-      }
-
-      const parsedData = axiosReturnOrThrow(response);
       await this.prismaService.itemTransfer.update({
         where: {
           id: entitlementTransfer.id,
+        },
+        data: {
+          txStatus: parsedData["result"]["status"] == "1",
+        },
+      });
+    }
+
+    // profile token - item token mapping tx status update
+    const itemMappings = await this.prismaService.itemMapping.findMany({
+      where: {
+        txStatus: null,
+      },
+    });
+
+    for (let itemMapping of itemMappings) {
+      const parsedData = await this.getTransactionStatus(itemMapping.txHash);
+
+      await this.prismaService.itemMapping.update({
+        where: {
+          id: itemMapping.id,
+        },
+        data: {
+          txStatus: parsedData["result"]["status"] == "1",
+        },
+      });
+    }
+
+    // profile token - entitlement token mapping tx status update
+    const entitlementMappings =
+      await this.prismaService.entitlementMapping.findMany({
+        where: {
+          txStatus: null,
+        },
+      });
+
+    for (let entitlementMapping of entitlementMappings) {
+      const parsedData = await this.getTransactionStatus(
+        entitlementMapping.txHash
+      );
+      await this.prismaService.entitlementMapping.update({
+        where: {
+          id: entitlementMapping.id,
         },
         data: {
           txStatus: parsedData["result"]["status"] == "1",
