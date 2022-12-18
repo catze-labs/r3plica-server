@@ -24,7 +24,7 @@ export class TransferController {
         sessionTicket
       );
 
-    return await this.web3Service.getFsbtTransferList(userInfo.PlayFabId);
+    return await this.web3Service.getFsbtTransfers(userInfo.PlayFabId);
   }
 
   // TODO : Add ApiResponse
