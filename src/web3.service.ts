@@ -17,15 +17,23 @@ export class Web3Service {
   ) {}
 
   async getItemTokenMetadata(id: string) {
-    // TODO : return token metadata
+    return this.prismaService.itemToken.findUnique({
+      where: {
+        tokenId: id,
+      },
+    });
   }
 
   async getEntitlementTokenMetadata(id: string) {
-    // TODO : return token metadata
+    return this.prismaService.entitlementToken.findUnique({
+      where: {
+        tokenId: id,
+      },
+    });
   }
 
   async getProfileTokenMetadata(id: string) {
-    // TODO : return token metadata
+    //
   }
 
   async getFsbtTransferList(playFabId: string) {

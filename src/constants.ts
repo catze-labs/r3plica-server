@@ -1,8 +1,8 @@
 import { AbiItem } from "web3-utils";
 
-export const TESTNET_PROXY_CONTRACT_ADDRESS =
-  "0xe81053df9C4079d47BAEBe57590a3373ED9656e2";
-export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
+export const TESTNET_PFSBT_PROXY_CONTRACT_ADDRESS =
+  "0x9211546312F8Cc02f85e24Aff13c115e325C1574";
+export const TESTNET_PFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
     inputs: [
@@ -12,6 +12,18 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
         internalType: "uint256",
         name: "tokenId",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "playfabID_",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "createdAt_",
+        type: "bytes32",
       },
     ],
     name: "Attest",
@@ -146,6 +158,8 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     inputs: [
       { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "count_", type: "uint256" },
+      { internalType: "bytes32", name: "playfabID_", type: "bytes32" },
+      { internalType: "bytes32", name: "createdAt_", type: "bytes32" },
     ],
     name: "attest",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
@@ -163,6 +177,8 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     inputs: [
       { internalType: "address[]", name: "addrs", type: "address[]" },
       { internalType: "uint256[]", name: "counts_", type: "uint256[]" },
+      { internalType: "bytes32[]", name: "playfabIDs_", type: "bytes32[]" },
+      { internalType: "bytes32[]", name: "createdAts_", type: "bytes32[]" },
     ],
     name: "batchAttest",
     outputs: [],
@@ -187,6 +203,41 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "countOf",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
+    name: "getItemIdsByProfileId",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
+    name: "getPlayfabId",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
+    name: "getProfileIdByItemId",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
+    name: "getProfileIdByQuestId",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
+    name: "getQuestsIdsByProfileId",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
@@ -268,6 +319,13 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "bytes32", name: "value", type: "bytes32" }],
+    name: "playfabIDMapGetKeys",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
       { internalType: "address", name: "account", type: "address" },
@@ -297,6 +355,42 @@ export const TESTNET_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [{ internalType: "string", name: "uri", type: "string" }],
     name: "setBaseTokenURI",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "itemAddress", type: "address" }],
+    name: "setItemAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "key", type: "uint256" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+    ],
+    name: "setItemIdsAndProfileId",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "questAddress", type: "address" },
+    ],
+    name: "setQuestAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "key", type: "uint256" },
+      { internalType: "uint256", name: "value", type: "uint256" },
+    ],
+    name: "setQuestIdsAndProfileId",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
