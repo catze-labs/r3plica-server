@@ -89,7 +89,7 @@ This repository a is part of r3plica project SDK.
 Another repository links are down below;
 
 - [r3plica-web: Frontend(NextJS)](https://github.com/catze-labs/r3plica-web)
-- [r3plica-unity: Unity](https://github.com/catze-labs/r3plica-unity)
+- [r3plica-unity: Unity](https://github.com/catze-labs/r3plica-unity-public)
 - [r3plica-playfab: PlayFab CloudScript (JS ES6)](https://github.com/root-catze/r3plica-playfab)
 
 ## Contact
