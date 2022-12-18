@@ -1,8 +1,8 @@
 import { AbiItem } from "web3-utils";
 
-export const TESTNET_PFSBT_PROXY_CONTRACT_ADDRESS =
+export const TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS =
   "0x9211546312F8Cc02f85e24Aff13c115e325C1574";
-export const TESTNET_PFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
+export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
     inputs: [
