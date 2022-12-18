@@ -180,14 +180,17 @@ export class Web3Service {
     return { txHash };
   }
 
-  async bindItemIdsToProfileIds(profileTokenId: string, itemTokenId: string) {
+  async bindItemIdsToProfileIds(
+    itemTokenIds: string[],
+    profileTokenIds: string[]
+  ) {
     const contract = new this.web3.eth.Contract(
       TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
-      .setItemIdsAndProfileIds(Number(profileTokenId), Number(itemTokenId))
+      .setItemIdsAndProfileIds(itemTokenIds, profileTokenIds)
       .encodeABI();
 
     // Get the gas limit
@@ -208,18 +211,15 @@ export class Web3Service {
         process.env.PRIVATE_KEY
       );
 
-      // Get tx receipt
-      const receipt = await this.web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction
-      );
+      await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
     } catch (err) {
       console.log(err);
     }
   }
 
   async bindAchievementIdsToProfileIds(
-    profileTokenId: string,
-    achievementTokenId: string
+    achievementTokenIds: string[],
+    profileTokenIds: string[]
   ) {
     const contract = new this.web3.eth.Contract(
       TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
@@ -227,10 +227,7 @@ export class Web3Service {
     );
 
     const encoded = contract.methods
-      .setAchievementIdsAndProfileIds(
-        Number(profileTokenId),
-        Number(achievementTokenId)
-      )
+      .setAchievementIdsAndProfileIds(achievementTokenIds, profileTokenIds)
       .encodeABI();
 
     // Get the gas limit
@@ -251,10 +248,7 @@ export class Web3Service {
         process.env.PRIVATE_KEY
       );
 
-      // Get tx receipt
-      const receipt = await this.web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction
-      );
+      await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
     } catch (err) {
       console.log(err);
     }
