@@ -174,7 +174,7 @@ export class CronService {
   async updateUserItemAndEntitlement() {
     const users = await this.prismaService.user.findMany({});
 
-    for (let user of users) {
+    for (const user of users) {
       const profileToken = await this.prismaService.profileToken.findFirst({
         where: {
           playFabId: user.playFabId,
@@ -210,7 +210,7 @@ export class CronService {
         );
       }
 
-      let entitlements = await this.playFabService.getUserEntitlements(
+      const entitlements = await this.playFabService.getUserEntitlements(
         user.playFabId
       );
       for (const entitlement of entitlements) {

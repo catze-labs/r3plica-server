@@ -209,7 +209,7 @@ export class PlayFabService {
       };
 
       // Compare transferred item to user already have item
-      for (let itemTransfer of itemTransfers) {
+      for (const itemTransfer of itemTransfers) {
         if (itemTransfer.itemId === userItem.itemID && itemTransfer.txStatus) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = itemTransfer;
@@ -246,7 +246,7 @@ export class PlayFabService {
     }
 
     // Parse axios response data
-    let userEntitlements: UserEntitlement[] =
+    const userEntitlements: UserEntitlement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
@@ -264,7 +264,7 @@ export class PlayFabService {
         transfer: null,
       };
 
-      for (let entitlementTransfer of entitlementTransfers) {
+      for (const entitlementTransfer of entitlementTransfers) {
         if (
           entitlementTransfer.entitlementId === quest.questID &&
           entitlementTransfer.txStatus

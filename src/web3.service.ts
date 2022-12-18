@@ -110,7 +110,7 @@ export class Web3Service {
       TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
-    for (let itemToken of itemTokens) {
+    for (const itemToken of itemTokens) {
       const encoded = itemContract.methods
         .limitedTransfer(walletAddress, 1)
         .encodeABI();
@@ -172,7 +172,7 @@ export class Web3Service {
       TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
-    for (let entitlementToken of entitlementTokens) {
+    for (const entitlementToken of entitlementTokens) {
       const encoded = entitlementContract.methods
         .limitedTransfer(walletAddress, 1)
         .encodeABI();
@@ -271,6 +271,7 @@ export class Web3Service {
       console.log(err);
     }
   }
+
   async mappingQfsbt(profileTokenId: string, entitlementTokenId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
