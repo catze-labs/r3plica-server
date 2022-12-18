@@ -180,14 +180,14 @@ export class Web3Service {
     return { txHash };
   }
 
-  async bindIfsbtToProfile(profileTokenId: string, itemTokenId: string) {
+  async bindItemIdsToProfileIds(profileTokenId: string, itemTokenId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
-      .setItemIdAndProfileId(Number(profileTokenId), Number(itemTokenId))
+      .setItemIdsAndProfileIds(Number(profileTokenId), Number(itemTokenId))
       .encodeABI();
 
     // Get the gas limit
@@ -217,14 +217,17 @@ export class Web3Service {
     }
   }
 
-  async bindQfsbtToProfile(profileTokenId: string, achievementTokenId: string) {
+  async bindAchievementIdsToProfileIds(
+    profileTokenId: string,
+    achievementTokenId: string
+  ) {
     const contract = new this.web3.eth.Contract(
       TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
-      .setQuestIdAndProfileId(
+      .setAchievementIdsAndProfileIds(
         Number(profileTokenId),
         Number(achievementTokenId)
       )

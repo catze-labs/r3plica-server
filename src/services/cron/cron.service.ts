@@ -184,7 +184,6 @@ export class CronService {
       const itemIdCandidates = [31, 18, 27, 34];
       items = items.filter((item) => itemIdCandidates.includes(item.itemID));
 
-      // TODO: reduce contract call count using new method
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
@@ -204,7 +203,7 @@ export class CronService {
               playFabId: user.playFabId,
             },
           }),
-          this.web3Service.bindIfsbtToProfile(
+          this.web3Service.bindItemIdsToProfileIds(
             profileToken.tokenId,
             itemToken.tokenId
           ),
@@ -241,7 +240,7 @@ export class CronService {
               playFabId: user.playFabId,
             },
           }),
-          this.web3Service.bindQfsbtToProfile(
+          this.web3Service.bindAchievementIdsToProfileIds(
             profileToken.tokenId,
             achievementToken.tokenId
           ),
