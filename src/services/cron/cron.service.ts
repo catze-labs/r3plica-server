@@ -2,7 +2,10 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
-import { TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS, TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
+import {
+  TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS,
+} from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
 
@@ -13,23 +16,22 @@ export class CronService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly playFabService: PlayFabService
-  ) {
+  ) {}
+
+  getBSCScanUrl(txHash: string) {
+    return `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
   }
 
   @Cron("*/3 * * * *")
   async updateTransactionStatus() {
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
-        txStatus: null
-      }
+        txStatus: null,
+      },
     });
 
     for (const itemTransfer of itemTransfers) {
-      const url = "https://api-testnet.bscscan.com/api" +
-        "?module=transaction" +
-        "&action=gettxreceiptstatus" +
-        "&txhash=" + itemTransfer.txHash +
-        "&apikey=" + process.env.BSCAN_API_KEY;
+      const url = this.getBSCScanUrl(itemTransfer.txHash);
 
       // Send get request
       let response: any;
@@ -44,26 +46,23 @@ export class CronService {
       const parsedData = axiosReturnOrThrow(response);
       await this.prismaService.itemTransfer.update({
         where: {
-          id: itemTransfer.id
+          id: itemTransfer.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1"
-        }
+          txStatus: parsedData["result"]["status"] == "1",
+        },
       });
     }
 
-    const entitlementTransfers = await this.prismaService.entitlementTransfer.findMany({
-      where: {
-        txStatus: null
-      }
-    });
+    const entitlementTransfers =
+      await this.prismaService.entitlementTransfer.findMany({
+        where: {
+          txStatus: null,
+        },
+      });
 
     for (const entitlementTransfer of entitlementTransfers) {
-      const url = "https://api-testnet.bscscan.com/api" +
-        "?module=transaction" +
-        "&action=gettxreceiptstatus" +
-        "&txhash=" + entitlementTransfer.txHash +
-        "&apikey=" + process.env.BSCAN_API_KEY;
+      const url = this.getBSCScanUrl(entitlementTransfer.txHash);
 
       // Send get request
       let response: any;
@@ -78,11 +77,11 @@ export class CronService {
       const parsedData = axiosReturnOrThrow(response);
       await this.prismaService.itemTransfer.update({
         where: {
-          id: entitlementTransfer.id
+          id: entitlementTransfer.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1"
-        }
+          txStatus: parsedData["result"]["status"] == "1",
+        },
       });
     }
   }
@@ -98,22 +97,21 @@ export class CronService {
       );
 
       for (const item of items) {
-        const itemToken = await this.prismaService.itemToken.findFirst(
-          {
-            where: {
-              contractAddress: TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS,
-              itemId: item.itemID,
-              playFabId: null
-            }
-          }
-        );
+        const itemToken = await this.prismaService.itemToken.findFirst({
+          where: {
+            contractAddress: TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS,
+            itemId: item.itemID,
+            playFabId: null,
+          },
+        });
+
         await this.prismaService.itemToken.update({
           where: {
-            tokenId: itemToken.tokenId
+            tokenId: itemToken.tokenId,
           },
           data: {
-            playFabId: user.playFabId
-          }
+            playFabId: user.playFabId,
+          },
         });
         //  TODO: contract call
       }
@@ -122,22 +120,21 @@ export class CronService {
         user.playFabId
       );
       for (const entitlement of entitlements) {
-        const entitlementToken = await this.prismaService.entitlementToken.findFirst(
-          {
+        const entitlementToken =
+          await this.prismaService.entitlementToken.findFirst({
             where: {
               contractAddress: TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS,
               entitlementId: entitlement.questID,
-              playFabId: null
-            }
-          }
-        );
+              playFabId: null,
+            },
+          });
         await this.prismaService.entitlementToken.update({
           where: {
-            tokenId: entitlementToken.tokenId
+            tokenId: entitlementToken.tokenId,
           },
           data: {
-            playFabId: user.playFabId
-          }
+            playFabId: user.playFabId,
+          },
         });
         //  TODO: contract call
       }
