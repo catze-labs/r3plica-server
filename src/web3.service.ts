@@ -2,7 +2,6 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
-  TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
@@ -273,11 +272,11 @@ export class Web3Service {
 
     // Encode the function call
     const encoded = contract.methods
-      .attest(
-        address,
-        1,
-        ethers.utils.formatBytes32String(user.playFabId),
-        ethers.utils.formatBytes32String(user.created.valueOf().toString())
+      .batchAttest(
+        [address],
+        [1],
+        [ethers.utils.formatBytes32String(user.playFabId)],
+        [ethers.utils.formatBytes32String(user.created.valueOf().toString())]
       )
       .encodeABI();
 
