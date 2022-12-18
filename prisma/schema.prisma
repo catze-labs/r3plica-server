@@ -17,16 +17,17 @@ model user {
   created       DateTime @default(now()) @db.DateTime(6)
   updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
 
-  profileMint          profileMint[]
-  profileTransfer      profileTransfer[]
-  itemTransfers        itemTransfer[]
-  entitlementTransfers entitlementTransfer[]
-  profileToken         profileToken?
-  itemTokens           itemToken[]
+  itemTokens    itemToken[]
+  itemTransfers itemTransfer[]
+  itemMappings  itemMapping[]
+
   entitlementTokens    entitlementToken[]
-  itemMappings         itemMapping[]
+  entitlementTransfers entitlementTransfer[]
   entitlementMappings  entitlementMapping[]
-  profileMetatdata     profileMetatdata[]
+
+  profileToken    profileToken?
+  profileMint     profileMint[]
+  profileTransfer profileTransfer[]
 }
 
 model nonce {
@@ -40,29 +41,24 @@ model nonce {
   @@index([address])
 }
 
-model latestBlock {
-  number  Int      @id
-  created DateTime @default(now()) @db.DateTime(6)
-  updated DateTime @default(now()) @updatedAt @db.DateTime(6)
+model itemToken {
+  tokenId         String        @id
+  itemId          Int
+  contractAddress String
+  playFabId       String?
+  user            user?         @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime      @default(now()) @db.DateTime(6)
+  updated         DateTime      @default(now()) @updatedAt @db.DateTime(6)
+  itemMapping     itemMapping[]
 }
 
-model profileMint {
+model itemTransfer {
   id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
+  itemId          Int
   playFabId       String
   tokenId         String?
-  contractAddress String
-  user            user     @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime @default(now()) @db.DateTime(6)
-  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
-}
-
-model profileTransfer {
-  id              Int      @id @default(autoincrement())
-  txHash          String
-  txStatus        Boolean?
-  playFabId       String
   contractAddress String
   user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
@@ -84,6 +80,30 @@ model itemMapping {
   updated         DateTime     @default(now()) @updatedAt @db.DateTime(6)
 }
 
+model entitlementToken {
+  tokenId            String               @id
+  entitlementId      Int
+  contractAddress    String
+  playFabId          String?
+  user               user?                @relation(fields: [playFabId], references: [playFabId])
+  created            DateTime             @default(now()) @db.DateTime(6)
+  updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
+  entitlementMapping entitlementMapping[]
+}
+
+model entitlementTransfer {
+  id              Int      @id @default(autoincrement())
+  txHash          String
+  txStatus        Boolean?
+  entitlementId   Int
+  playFabId       String
+  tokenId         String?
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
 model entitlementMapping {
   id                 Int              @id @default(autoincrement())
   txHash             String
@@ -100,54 +120,6 @@ model entitlementMapping {
   updated   DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
-model itemTransfer {
-  id              Int      @id @default(autoincrement())
-  txHash          String
-  txStatus        Boolean?
-  itemId          Int
-  playFabId       String
-  tokenId         String?
-  contractAddress String
-  user            user     @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime @default(now()) @db.DateTime(6)
-  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
-}
-
-model entitlementTransfer {
-  id              Int      @id @default(autoincrement())
-  txHash          String
-  txStatus        Boolean?
-  entitlementId   Int
-  playFabId       String
-  tokenId         String?
-  contractAddress String
-  user            user     @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime @default(now()) @db.DateTime(6)
-  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
-}
-
-model itemToken {
-  tokenId         String        @id
-  itemId          Int
-  contractAddress String
-  playFabId       String?
-  user            user?         @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime      @default(now()) @db.DateTime(6)
-  updated         DateTime      @default(now()) @updatedAt @db.DateTime(6)
-  itemMapping     itemMapping[]
-}
-
-model entitlementToken {
-  tokenId            String               @id
-  entitlementId      Int
-  contractAddress    String
-  playFabId          String?
-  user               user?                @relation(fields: [playFabId], references: [playFabId])
-  created            DateTime             @default(now()) @db.DateTime(6)
-  updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
-  entitlementMapping entitlementMapping[]
-}
-
 model profileToken {
   tokenId            String               @id
   txHash             String
@@ -161,31 +133,25 @@ model profileToken {
   itemMapping        itemMapping[]
 }
 
-model profileMetatdata {
-  tokenId         Int      @id @default(autoincrement())
+model profileTransfer {
+  id              Int      @id @default(autoincrement())
+  txHash          String
+  txStatus        Boolean?
   playFabId       String
+  contractAddress String
   user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
-  contractAddress String
 }
 
-model itemMetadata {
-  tokenId         Int      @id @default(autoincrement())
-  itemId          Int
-  itemName        String
-  itemRarity      String
+model profileMint {
+  id              Int      @id @default(autoincrement())
+  txHash          String
+  txStatus        Boolean?
+  playFabId       String
+  tokenId         String?
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
-  contractAddress String
-}
-
-model entitlementMetadata {
-  tokenId                Int      @id @default(autoincrement())
-  entitlementId          Int
-  entitlementName        String
-  entitlementDescription String
-  created                DateTime @default(now()) @db.DateTime(6)
-  updated                DateTime @default(now()) @updatedAt @db.DateTime(6)
-  contractAddress        String
 }
