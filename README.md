@@ -86,6 +86,9 @@ $ npm run start:prod
 If you run server successfully,
 you can see Swagger API document in [http://localhost:8081/docs](http://localhost:8081/docs)
 
+<img width="734" alt="Screen Shot 2022-12-19 at 6 40 39" src="https://user-images.githubusercontent.com/14136835/208321065-e914cb92-93f4-4716-96d2-4bd6ff4737a3.png">
+
+
 ## Support
 
 This repository a is part of r3plica project SDK.  
