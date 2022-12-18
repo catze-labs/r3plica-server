@@ -48,8 +48,6 @@ export class CronService {
         await this.prismaService.profileToken.create({
           data: {
             tokenId,
-            txHash: profileMint.txHash,
-            txStatus,
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
             playFabId: profileMint.playFabId,
           },
