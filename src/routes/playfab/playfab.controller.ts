@@ -9,14 +9,12 @@ import {
 } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PlayFabService } from "src/services/playfab/playfab.service";
-import { PatchUserWalletDto } from "./dto/patch-user-wallet.dto";
 import { PlayFabRequestDto } from "./dto/playfab-request.dto";
 import { UserLoginDto } from "./dto/user-login.dto";
 import { UserRegisterDto } from "./dto/user-register.dto";
 import {
   entitlementsApiResponse,
   itemsApiResponse,
-  linkWalletApiResponse,
   loginApiResponse,
   registerApiResponse,
 } from "./schema";
@@ -39,23 +37,6 @@ export class PlayFabController {
   async login(@Body() userLoginDto: UserLoginDto) {
     const { email, password } = userLoginDto;
     return await this.PlayFabService.login(email, password);
-  }
-
-  @Patch("link-wallet")
-  @ApiResponse(linkWalletApiResponse)
-  async walletLink(@Body() patchUserWalletDto: PatchUserWalletDto) {
-    const { sessionTicket, walletAddress, signature } = patchUserWalletDto;
-
-    const userInfo =
-      await this.PlayFabService.validateAndGetUserInfoBySessionTicket(
-        sessionTicket
-      );
-
-    return await this.PlayFabService.updateUserWalletAddress(
-      userInfo.PlayFabId,
-      walletAddress,
-      signature
-    );
   }
 
   @Get("items")
