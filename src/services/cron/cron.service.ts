@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
 import { Web3Service } from "src/web3.service";
-import { achievementToken, itemToken, profileMint } from "@prisma/client";
+import { profileMint } from "@prisma/client";
 
 @Injectable()
 export class CronService {
@@ -22,7 +22,7 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  @Cron("*/3 * * * * *")
+  @Cron("*/3 * * * *")
   async updateTransactionStatus() {
     // Update profile mint tx status
     const profileMints: profileMint[] =
@@ -168,7 +168,7 @@ export class CronService {
     }
   }
 
-  @Cron("*/3 * * * * *")
+  @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     const users = await this.prismaService.user.findMany({});
 
