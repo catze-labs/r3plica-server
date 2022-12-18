@@ -72,6 +72,11 @@ export class Web3Service {
       });
     }
 
+    const contract = new this.web3.eth.Contract(
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
     const achievementTokens =
       await this.prismaService.achievementToken.findMany({
         where: {
@@ -106,50 +111,72 @@ export class Web3Service {
       profileIdsByItemIds.push(ethers.utils.formatBytes32String(playFabId));
     }
 
-    const contract = new this.web3.eth.Contract(
-      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
-      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
-    );
-    const encoded = contract.methods
-      .batchSetAchievementAndItemMaps(
-        achievementTokenIds,
-        profileIdsByAchievementIds,
-        itemTokenIds,
-        profileIdsByItemIds
-      )
-      .encodeABI();
-
-    // Get the gas limit
+    // Get the latest block
     const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
 
     // Create the transaction
-    const tx = {
-      gas: gasLimit,
+    const setAchievementIdsAndProfileIdsTx = {
+      gas: Math.round(block.gasLimit / block.transactions.length),
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-      data: encoded,
+      data: contract.methods
+        .setAchievementIdsAndProfileIds(
+          achievementTokenIds,
+          profileIdsByAchievementIds
+        )
+        .encodeABI(),
     };
 
-    let txHash;
+    // Create the transaction
+    const setItemIdsAndProfileIdsTx = {
+      gas: Math.round(block.gasLimit / block.transactions.length),
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: contract.methods
+        .setItemIdsAndProfileIds(itemTokenIds, profileIdsByItemIds)
+        .encodeABI(),
+    };
+
+    let setAchievementIdsAndProfileIdsTxHash;
+    let setItemIdsAndProfileIdsTxHash;
     try {
       // Sign the transaction
-      const signedTx = await this.web3.eth.accounts.signTransaction(
-        tx,
-        process.env.PRIVATE_KEY
-      );
+      const [
+        signedSetAchievementIdsAndProfileIdsTx,
+        signedSetItemIdsAndProfileIdsTx,
+      ] = await Promise.all([
+        this.web3.eth.accounts.signTransaction(
+          setAchievementIdsAndProfileIdsTx,
+          process.env.PRIVATE_KEY
+        ),
+        this.web3.eth.accounts.signTransaction(
+          setItemIdsAndProfileIdsTx,
+          process.env.PRIVATE_KEY
+        ),
+      ]);
 
       // Get tx receipt
-      const receipt = await this.web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction
-      );
-      txHash = receipt.transactionHash;
+      const [
+        setAchievementIdsAndProfileIdsTxReceipt,
+        setItemIdsAndProfileIdsTxReceipt,
+      ] = await Promise.all([
+        this.web3.eth.sendSignedTransaction(
+          signedSetAchievementIdsAndProfileIdsTx.rawTransaction
+        ),
+        this.web3.eth.sendSignedTransaction(
+          signedSetItemIdsAndProfileIdsTx.rawTransaction
+        ),
+      ]);
+
+      setAchievementIdsAndProfileIdsTxHash =
+        setAchievementIdsAndProfileIdsTxReceipt.transactionHash;
+      setItemIdsAndProfileIdsTxHash =
+        setItemIdsAndProfileIdsTxReceipt.transactionHash;
 
       let achievementTransferCreateData = [];
       let itemTransferCreateData = [];
       for (const achievementToken of achievementTokens) {
         achievementTransferCreateData.push({
           playFabId: playFabId,
-          txHash,
+          txHash: setAchievementIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
           achievementId: achievementToken.achievementId,
         });
@@ -157,7 +184,7 @@ export class Web3Service {
       for (const itemToken of itemTokens) {
         itemTransferCreateData.push({
           playFabId: playFabId,
-          txHash,
+          txHash: setItemIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
           itemId: itemToken.itemId,
         });
@@ -177,7 +204,10 @@ export class Web3Service {
       console.log(err);
     }
 
-    return { txHash };
+    return {
+      txHash1: setAchievementIdsAndProfileIdsTxHash,
+      txHash2: setItemIdsAndProfileIdsTxHash,
+    };
   }
 
   async bindItemIdsToProfileIds(
