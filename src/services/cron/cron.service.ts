@@ -24,6 +24,8 @@ export class CronService {
 
   @Cron("*/3 * * * *")
   async updateTransactionStatus() {
+    this.logger.log("updateTransactionStatus");
+
     // Update profile mint tx status
     const profileMints: profileMint[] =
       await this.prismaService.profileMint.findMany({
@@ -129,6 +131,7 @@ export class CronService {
 
   @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
+    this.logger.log("updateUserItemAndAchievement");
     const users = await this.prismaService.user.findMany({});
 
     for (const user of users) {
@@ -220,6 +223,22 @@ export class CronService {
         achievementTokenIds.map(String),
         profileTokenIdsByAchievementTokenIds.map(String)
       );
+    }
+  }
+
+  @Cron("*/1 * * * *")
+  async mintProfileTokenForced() {
+    this.logger.log("mintProfileTokenForced");
+    const users = await this.prismaService.user.findMany({
+      include: {
+        profileToken: true,
+      },
+    });
+
+    users.filter((user) => !user.profileToken);
+
+    for (const user of users) {
+      await this.web3Service.mintPAFSBT(user.playFabId);
     }
   }
 
