@@ -204,7 +204,7 @@ export class CronService {
           },
         });
 
-        await this.web3Service.mappingIfsbt(
+        await this.web3Service.bindIfsbtToProfile(
           profileToken.tokenId,
           itemToken.tokenId
         );
@@ -230,7 +230,7 @@ export class CronService {
             playFabId: user.playFabId,
           },
         });
-        await this.web3Service.mappingQfsbt(
+        await this.web3Service.bindQfsbtToProfile(
           profileToken.tokenId,
           entitlementToken.tokenId
         );

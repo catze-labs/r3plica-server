@@ -225,14 +225,14 @@ export class Web3Service {
     };
   }
 
-  async mappingIfsbt(profileTokenId: string, itemTokenId: string) {
+  async bindIfsbtToProfile(profileTokenId: string, itemTokenId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
-      .setItemIdsAndProfileId(Number(profileTokenId), Number(itemTokenId))
+      .setItemIdAndProfileId(Number(profileTokenId), Number(itemTokenId))
       .encodeABI();
 
     // Get the gas limit
@@ -257,29 +257,19 @@ export class Web3Service {
       const receipt = await this.web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
-
-      // Create itemTransfer history
-      // await this.prismaService.entitlementTransfer.create({
-      //   data: {
-      //     playFabId: playFabId,
-      //     txHash: receipt.transactionHash,
-      //     contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-      //     entitlementId: entitlementToken.entitlementId,
-      //   },
-      // });
     } catch (err) {
       console.log(err);
     }
   }
 
-  async mappingQfsbt(profileTokenId: string, entitlementTokenId: string) {
+  async bindQfsbtToProfile(profileTokenId: string, entitlementTokenId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
-      .setItemIdsAndProfileId(
+      .setQuestIdAndProfileId(
         Number(profileTokenId),
         Number(entitlementTokenId)
       )
