@@ -1,7 +1,7 @@
 import { AbiItem } from "web3-utils";
 
 export const TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x31cA48422C99De7b7bEF70579E046811B51CfB62";
+  "0xE40495B6e4a0f19BF40F990320DD68CA7423e7D5";
 export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -152,18 +152,6 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     name: "OPERATOR_ROLE",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "count_", type: "uint256" },
-      { internalType: "bytes32", name: "playfabID_", type: "bytes32" },
-      { internalType: "bytes32", name: "createdAt_", type: "bytes32" },
-    ],
-    name: "attest",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
