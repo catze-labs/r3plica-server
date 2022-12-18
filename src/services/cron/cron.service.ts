@@ -189,19 +189,20 @@ export class CronService {
           },
         });
 
-        await this.prismaService.itemToken.update({
-          where: {
-            tokenId: itemToken.tokenId,
-          },
-          data: {
-            playFabId: user.playFabId,
-          },
-        });
-
-        await this.web3Service.bindIfsbtToProfile(
-          profileToken.tokenId,
-          itemToken.tokenId
-        );
+        await Promise.all([
+          this.prismaService.itemToken.update({
+            where: {
+              tokenId: itemToken.tokenId,
+            },
+            data: {
+              playFabId: user.playFabId,
+            },
+          }),
+          this.web3Service.bindIfsbtToProfile(
+            profileToken.tokenId,
+            itemToken.tokenId
+          ),
+        ]);
       }
 
       let achievements = await this.playFabService.getUserAchievements(
@@ -223,18 +224,20 @@ export class CronService {
               playFabId: null,
             },
           });
-        await this.prismaService.achievementToken.update({
-          where: {
-            tokenId: achievementToken.tokenId,
-          },
-          data: {
-            playFabId: user.playFabId,
-          },
-        });
-        await this.web3Service.bindQfsbtToProfile(
-          profileToken.tokenId,
-          achievementToken.tokenId
-        );
+        await Promise.all([
+          this.prismaService.achievementToken.update({
+            where: {
+              tokenId: achievementToken.tokenId,
+            },
+            data: {
+              playFabId: user.playFabId,
+            },
+          }),
+          this.web3Service.bindQfsbtToProfile(
+            profileToken.tokenId,
+            achievementToken.tokenId
+          ),
+        ]);
       }
     }
   }
