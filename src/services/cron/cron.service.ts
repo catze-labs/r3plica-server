@@ -58,8 +58,6 @@ export class CronService {
             playFabId: profileMint.playFabId,
           },
         });
-      } else {
-        await this.web3Service.mintPAFSBT(profileMint.playFabId);
       }
     }
 
@@ -232,16 +230,15 @@ export class CronService {
     const users = await this.prismaService.user.findMany({
       include: {
         profileToken: true,
-        profileMint: true,
+        profileMint: {
+          where: {
+            txStatus: false,
+          },
+        },
       },
     });
 
-    users.filter(
-      (user) =>
-        !user.profileToken &&
-        user.profileMint["txStatus"] !== null &&
-        user.profileMint["txStatus"] !== true
-    );
+    users.filter((user) => !user.profileToken && user.profileMint.length > 0);
 
     for (const user of users) {
       await this.web3Service.mintPAFSBT(user.playFabId);
