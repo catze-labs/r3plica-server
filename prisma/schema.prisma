@@ -26,6 +26,7 @@ model user {
   entitlementTokens    entitlementToken[]
   itemMappings         itemMapping[]
   entitlementMappings  entitlementMapping[]
+  profileMetatdata     profileMetatdata[]
 }
 
 model nonce {
@@ -158,4 +159,33 @@ model profileToken {
   updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
   entitlementMapping entitlementMapping[]
   itemMapping        itemMapping[]
+}
+
+model profileMetatdata {
+  tokenId         Int      @id @default(autoincrement())
+  playFabId       String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+  contractAddress String
+}
+
+model itemMetadata {
+  tokenId         Int      @id @default(autoincrement())
+  itemId          Int
+  itemName        String
+  itemRarity      String
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+  contractAddress String
+}
+
+model entitlementMetadata {
+  tokenId                Int      @id @default(autoincrement())
+  entitlementId          Int
+  entitlementName        String
+  entitlementDescription String
+  created                DateTime @default(now()) @db.DateTime(6)
+  updated                DateTime @default(now()) @updatedAt @db.DateTime(6)
+  contractAddress        String
 }
