@@ -248,8 +248,10 @@ export class PlayFabService {
     }
 
     // Parse axios response data
-    const userAchievements: UserAchievement[] =
+    let userAchievements: UserAchievement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
+
+    userAchievements.filter((achievement) => achievement.state === 4);
 
     // Transfer history
     const achievementTransfers =
