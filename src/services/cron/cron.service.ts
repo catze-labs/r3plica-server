@@ -3,9 +3,9 @@ import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import {
+  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
@@ -44,8 +44,9 @@ export class CronService {
         },
       });
       if (txStatus) {
-        // Todo: tokenId need
-        const tokenId = "";
+        const tokenId = await this.web3Service.getProfileTokenId(
+          profileMint.playFabId
+        );
         await this.prismaService.profileToken.create({
           data: {
             tokenId,
