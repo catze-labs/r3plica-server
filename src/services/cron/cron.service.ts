@@ -58,8 +58,6 @@ export class CronService {
             playFabId: profileMint.playFabId,
           },
         });
-      } else {
-        await this.web3Service.mintPAFSBT(profileMint.playFabId);
       }
     }
 
