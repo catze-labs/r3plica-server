@@ -9,6 +9,6 @@ declare namespace NodeJS {
     WEB3_STORAGE_API_TOKEN: string;
     BSC_TEST_PROVIDER: string;
     BSC_PROVIDER: string;
-    CONTRACT_PRIVATE_KEY: string;
+    PRIVATE_KEY: string;
   }
 }

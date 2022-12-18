@@ -311,9 +311,18 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
+    const address = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
+
     // Encode the function call
     const encoded = contract.methods
-      .attest(user.playFabId, user.created.valueOf().toString())
+      .attest(
+        address,
+        1,
+        this.web3.utils.asciiToHex(user.playFabId),
+        this.web3.utils.asciiToHex(user.created.valueOf().toString())
+      )
       .encodeABI();
 
     // Get the gas limit
@@ -347,6 +356,8 @@ export class Web3Service {
       });
 
       Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+
+      return receipt.transactionHash;
     } catch (err) {
       console.log(err);
     }
