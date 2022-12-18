@@ -1,7 +1,7 @@
 import { AbiItem } from "web3-utils";
 
 export const TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x298E63f65265b2B7319CA4581431BcB541f001B2";
+  "0x31cA48422C99De7b7bEF70579E046811B51CfB62";
 export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -129,12 +129,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: "address", name: "from", type: "address" },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: true,
         internalType: "uint256",
@@ -162,17 +157,9 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "address", name: "to", type: "address" },
-      {
-        internalType: "uint256",
-        name: "count_",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "count_", type: "uint256" },
       { internalType: "bytes32", name: "playfabID_", type: "bytes32" },
-      {
-        internalType: "bytes32",
-        name: "createdAt_",
-        type: "bytes32",
-      },
+      { internalType: "bytes32", name: "createdAt_", type: "bytes32" },
     ],
     name: "attest",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
@@ -189,17 +176,9 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "address[]", name: "addrs", type: "address[]" },
-      {
-        internalType: "uint256[]",
-        name: "counts_",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "counts_", type: "uint256[]" },
       { internalType: "bytes32[]", name: "playfabIDs_", type: "bytes32[]" },
-      {
-        internalType: "bytes32[]",
-        name: "createdAts_",
-        type: "bytes32[]",
-      },
+      { internalType: "bytes32[]", name: "createdAts_", type: "bytes32[]" },
     ],
     name: "batchAttest",
     outputs: [],
@@ -215,11 +194,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256[]",
-        name: "achievementIds",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "achievementIds", type: "uint256[]" },
       {
         internalType: "uint256[]",
         name: "profileIdsByAchievementIds",
@@ -303,11 +278,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "grantRole",
     outputs: [],
@@ -317,11 +288,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "hasRole",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
@@ -331,11 +298,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "string", name: "name_", type: "string" },
-      {
-        internalType: "string",
-        name: "symbol_",
-        type: "string",
-      },
+      { internalType: "string", name: "symbol_", type: "string" },
       { internalType: "address", name: "admin_", type: "address" },
     ],
     name: "initialize",
@@ -360,11 +323,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "address", name: "from", type: "address" },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "limitedTransfer",
@@ -389,11 +348,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "renounceRole",
     outputs: [],
@@ -410,11 +365,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
+      { internalType: "address", name: "account", type: "address" },
     ],
     name: "revokeRole",
     outputs: [],
@@ -433,11 +384,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "uint256[]", name: "keys", type: "uint256[]" },
-      {
-        internalType: "uint256[]",
-        name: "values",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "values", type: "uint256[]" },
     ],
     name: "setAchievementIdsAndProfileIds",
     outputs: [],
@@ -461,11 +408,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "uint256[]", name: "keys", type: "uint256[]" },
-      {
-        internalType: "uint256[]",
-        name: "values",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "values", type: "uint256[]" },
     ],
     name: "setItemIdsAndProfileIds",
     outputs: [],
@@ -510,17 +453,9 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [
       { internalType: "address", name: "from", type: "address" },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "tokenId", type: "uint256" },
-      {
-        internalType: "address",
-        name: "destinationAddress",
-        type: "address",
-      },
+      { internalType: "address", name: "destinationAddress", type: "address" },
     ],
     name: "transferFallback",
     outputs: [],
@@ -529,7 +464,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
 ];
 export const TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x9C268ca2bD5552A8E2E2adbBd0d33ce72f2277CA";
+  "0x237B27d590e418eC31Ba4FdC933b59b6CA2d1204";
 export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -899,7 +834,7 @@ export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
 ];
 export const TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x5Ab9F7A5470462E3bc875F5B2Cd4F442661a9fA6";
+  "0x1be4cbCfdfE97B49786928ce1A95d02B03B81A4A";
 export const TESTNET_AAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
