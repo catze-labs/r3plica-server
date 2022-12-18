@@ -2,8 +2,6 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
-  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
@@ -177,7 +175,7 @@ export class Web3Service {
         achievementTransferCreateData.push({
           playFabId: playFabId,
           txHash: setAchievementIdsAndProfileIdsTxHash,
-          contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+          contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
           achievementId: achievementToken.achievementId,
         });
       }
@@ -185,7 +183,7 @@ export class Web3Service {
         itemTransferCreateData.push({
           playFabId: playFabId,
           txHash: setItemIdsAndProfileIdsTxHash,
-          contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+          contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
           itemId: itemToken.itemId,
         });
       }
@@ -230,7 +228,7 @@ export class Web3Service {
     // Create the transaction
     const tx = {
       gas: gasLimit,
-      to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
 
@@ -267,7 +265,7 @@ export class Web3Service {
     // Create the transaction
     const tx = {
       gas: gasLimit,
-      to: TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
 

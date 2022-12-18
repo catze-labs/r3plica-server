@@ -2,11 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
-import {
-  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-} from "../../constants";
+import { TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
 import { Web3Service } from "src/web3.service";
@@ -151,7 +147,7 @@ export class CronService {
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
-            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+            contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
             itemId: item.itemID,
             playFabId: null,
           },
@@ -196,7 +192,7 @@ export class CronService {
         const achievementToken =
           await this.prismaService.achievementToken.findFirst({
             where: {
-              contractAddress: TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
+              contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
               achievementId: achievement.questID,
               playFabId: null,
             },
