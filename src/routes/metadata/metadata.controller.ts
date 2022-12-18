@@ -22,16 +22,16 @@ export class MetadataController {
         description: "Plate Helmet - item of r3plica",
         image: "https://r3plica-web.vercel.app/assets/18.png",
       };
-    } else if (tokenIdNumber > 10 && tokenIdNumber < 13) {
+    } else if (tokenIdNumber > 10 && tokenIdNumber < 19) {
       return {
         name: "Cloth Shoulders",
         description: "Cloth Shoulders - item of r3plica",
         image: "https://r3plica-web.vercel.app/assets/27.png",
       };
-    } else if (tokenIdNumber > 12 && tokenIdNumber < 21) {
+    } else if (tokenIdNumber > 18 && tokenIdNumber < 21) {
       return {
         name: "Wind Staff",
-        description: "Cloth Shoulders - item of r3plica",
+        description: "Wind Staff - item of r3plica",
         image: "https://r3plica-web.vercel.app/assets/34.png",
       };
     }
