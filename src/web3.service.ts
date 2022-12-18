@@ -41,6 +41,12 @@ export class Web3Service {
   }
 
   async getFsbtTransferList(playFabId: string) {
+    const profileTransfers = await this.prismaService.profileTransfer.findMany({
+      where: {
+        playFabId,
+      },
+    });
+
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
         playFabId,
@@ -55,6 +61,7 @@ export class Web3Service {
       });
 
     return {
+      profileTransfers,
       itemTransfers,
       entitlementTransfers,
     };
