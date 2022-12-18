@@ -10,7 +10,7 @@ export class MetadataController {
   @Get("/items/:tokenId")
   async getItemTokenMetadata(@Param("tokenId") tokenId: string) {
     const tokenIdNumber = Number(tokenId);
-    if (tokenIdNumber < 3) {
+    if (tokenIdNumber > 0 && tokenIdNumber < 3) {
       return {
         name: "Lava Axe",
         description: "Lava Axe - item of r3plica",
@@ -28,7 +28,7 @@ export class MetadataController {
         description: "Cloth Shoulders - item of r3plica",
         image: "https://r3plica-web.vercel.app/assets/27.png",
       };
-    } else {
+    } else if (tokenIdNumber > 12 && tokenIdNumber < 21) {
       return {
         name: "Wind Staff",
         description: "Cloth Shoulders - item of r3plica",
