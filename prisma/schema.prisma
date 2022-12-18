@@ -17,11 +17,13 @@ model user {
   created       DateTime @default(now()) @db.DateTime(6)
   updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
 
+  profileMint          profileMint[]
+  profileTransfer      profileTransfer[]
   itemTransfers        itemTransfer[]
   entitlementTransfers entitlementTransfer[]
+  profileToken         profileToken?
   itemTokens           itemToken[]
   entitlementTokens    entitlementToken[]
-  profileTransfer      profileTransfer?
 }
 
 model nonce {
@@ -41,11 +43,23 @@ model latestBlock {
   updated DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
+model profileMint {
+  id              Int      @id @default(autoincrement())
+  txHash          String
+  txStatus        Boolean?
+  playFabId       String
+  tokenId         String?
+  contractAddress String
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
 model profileTransfer {
   id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
-  playFabId       String   @unique
+  playFabId       String
   contractAddress String
   user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
@@ -94,6 +108,17 @@ model entitlementToken {
   contractAddress String
   playFabId       String?
   user            user?    @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
+}
+
+model profileToken {
+  tokenId         String   @id
+  txHash          String
+  txStatus        Boolean?
+  contractAddress String
+  playFabId       String   @unique
+  user            user     @relation(fields: [playFabId], references: [playFabId])
   created         DateTime @default(now()) @db.DateTime(6)
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
