@@ -195,6 +195,7 @@ export class CronService {
         (item) => item.rarity === "Epic" || item.rarity === "Legendary"
       );
 
+      // TODO: reduce contract call count using new method
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
