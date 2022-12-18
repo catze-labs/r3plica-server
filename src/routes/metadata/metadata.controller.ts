@@ -7,18 +7,18 @@ import { Web3Service } from "src/web3.service";
 export class MetadataController {
   constructor(private web3Service: Web3Service) {}
 
-  @Get("/item/:id")
-  async getItemTokenMetadata(@Param("id") id: string) {
-    return this.web3Service.getItemTokenMetadata(id);
+  @Get("/items/:tokenId")
+  async getItemTokenMetadata(@Param("tokenId") tokenId: string) {
+    return this.web3Service.getItemTokenMetadata(tokenId);
   }
 
-  @Get("/entitlement/:id")
-  async getEntitlementTokenMetadata(@Param("id") id: string) {
-    return this.web3Service.getEntitlementTokenMetadata(id);
+  @Get("/entitlements/:tokenId")
+  async getEntitlementTokenMetadata(@Param("tokenId") tokenId: string) {
+    return this.web3Service.getEntitlementTokenMetadata(tokenId);
   }
 
-  @Get("/profile/:id")
-  async getProfileTokenMetadata(@Param("id") id: string) {
-    return this.web3Service.getProfileTokenMetadata(id);
+  @Get("/profiles/:tokenId")
+  async getProfileTokenMetadata(@Param("tokenId") tokenId: string) {
+    return this.web3Service.getProfileTokenMetadata(tokenId);
   }
 }

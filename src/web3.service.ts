@@ -20,23 +20,23 @@ export class Web3Service {
 
   constructor(private prismaService: PrismaService) {}
 
-  async getItemTokenMetadata(id: string) {
+  async getItemTokenMetadata(tokenId: string) {
     return this.prismaService.itemToken.findUnique({
       where: {
-        tokenId: id,
+        tokenId,
       },
     });
   }
 
-  async getEntitlementTokenMetadata(id: string) {
+  async getEntitlementTokenMetadata(tokenId: string) {
     return this.prismaService.entitlementToken.findUnique({
       where: {
-        tokenId: id,
+        tokenId,
       },
     });
   }
 
-  async getProfileTokenMetadata(id: string) {
+  async getProfileTokenMetadata(tokenId: string) {
     //
   }
 
