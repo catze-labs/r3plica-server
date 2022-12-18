@@ -6,8 +6,8 @@ import {
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
-  TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
+  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
 import { PrismaService } from "./prisma.service";
 
@@ -218,8 +218,8 @@ export class Web3Service {
 
   async bindQfsbtToProfile(profileTokenId: string, achievementTokenId: string) {
     const contract = new this.web3.eth.Contract(
-      TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
-      TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
+      TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
     const encoded = contract.methods
@@ -236,7 +236,7 @@ export class Web3Service {
     // Create the transaction
     const tx = {
       gas: gasLimit,
-      to: TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
+      to: TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
 

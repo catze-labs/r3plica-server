@@ -5,7 +5,7 @@ import { PlayFabService } from "../playfab/playfab.service";
 import {
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
@@ -224,7 +224,7 @@ export class CronService {
         const achievementToken =
           await this.prismaService.achievementToken.findFirst({
             where: {
-              contractAddress: TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
+              contractAddress: TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
               achievementId: achievement.questID,
               playFabId: null,
             },

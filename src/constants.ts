@@ -1,7 +1,7 @@
 import { AbiItem } from "web3-utils";
 
 export const TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0xBd3F4BA8f7a91DF2cd50d887048628e7c6c569eD";
+  "0x8De5adB0c1b7009761dA7c7Ad8261530B93cbe15";
 export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -432,7 +432,7 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
 ];
 export const TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0xC43c4E74Ed19351afdb2DE3695E6677C22Ec6347";
+  "0x9C268ca2bD5552A8E2E2adbBd0d33ce72f2277CA";
 export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
@@ -774,9 +774,9 @@ export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
 ];
-export const TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS =
-  "0x5CbA8f9B49B78179eb6Da7C8fa7853658C4AC7b4";
-export const TESTNET_QAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
+export const TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS =
+  "0x5Ab9F7A5470462E3bc875F5B2Cd4F442661a9fA6";
+export const TESTNET_AAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     anonymous: false,
     inputs: [
