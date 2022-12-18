@@ -330,6 +330,8 @@ export class Web3Service {
       });
 
       Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+
+      return { txHash: receipt.transactionHash };
     } catch (err) {
       console.log(err);
     }
