@@ -305,12 +305,11 @@ export class Web3Service {
         signedTx.rawTransaction
       );
       console.log("attest receipt:", receipt);
-
+      const tokenId = this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
           playFabId: user.playFabId,
-          // TODO: fill tokenId
-          tokenId: "",
+          tokenId,
           txHash: receipt.transactionHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
         },
@@ -393,7 +392,7 @@ export class Web3Service {
     }
   }
 
-  async getProfileTokenId(playFabId: string) {
+  getProfileTokenId(playFabId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -409,6 +408,5 @@ export class Web3Service {
           return result[0];
         }
       });
-    return;
   }
 }
