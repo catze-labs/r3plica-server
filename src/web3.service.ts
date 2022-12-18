@@ -392,7 +392,7 @@ export class Web3Service {
     }
   }
 
-  getProfileTokenId(playFabId: string) {
+  getProfileTokenId(playFabId: string): string {
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -403,10 +403,11 @@ export class Web3Service {
       .call((err, result) => {
         if (err) {
           console.log("err:", err);
-          return;
         } else {
-          return result[0];
+          const profileTokenId: string = result[0];
+          return profileTokenId;
         }
       });
+    return "0";
   }
 }
