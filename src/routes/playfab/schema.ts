@@ -74,10 +74,10 @@ const itemTransfer = {
   updated: { type: "string", format: "date-time" },
 };
 
-const entitlementTransfer = {
+const achievementTransfer = {
   id: { type: "integer" },
   txHash: { type: "string" },
-  entitlement: { type: "object" },
+  achievement: { type: "object" },
   playFabId: { type: "string" },
   tokenId: { type: "string", nullable: true },
   contractAddress: { type: "string" },
@@ -100,14 +100,14 @@ const item = {
   transfer: { type: "object", properties: itemTransfer, nullable: true },
 };
 
-const entitlement = {
+const achievement = {
   questID: { type: "number" },
   questTitle: { type: "string" },
   description: { type: "string" },
   state: { type: "number", enum: [0, 1, 2, 3, 4] },
   objectives: { type: "array", items: { type: "object" } },
   isTransferred: { type: "boolean" },
-  transfer: { type: "object", properties: entitlementTransfer, nullable: true },
+  transfer: { type: "object", properties: achievementTransfer, nullable: true },
 };
 
 export const registerApiResponse = {
@@ -143,17 +143,17 @@ export const itemsApiResponse = {
   },
 };
 
-export const entitlementsApiResponse = {
+export const achievementsApiResponse = {
   status: 200,
   description: "Get User in-game inventory items",
   schema: {
     type: "object",
     properties: {
-      entitlements: {
+      achievements: {
         type: "array",
         items: {
           type: "object",
-          properties: entitlement,
+          properties: achievement,
         },
       },
     },

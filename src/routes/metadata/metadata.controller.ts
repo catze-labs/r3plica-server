@@ -37,21 +37,21 @@ export class MetadataController {
     }
   }
 
-  @Get("/entitlements/:tokenId")
-  async getEntitlementTokenMetadata(@Param("tokenId") tokenId: string) {
+  @Get("/achievements/:tokenId")
+  async getAchievementTokenMetadata(@Param("tokenId") tokenId: string) {
     const tokenIdNumber = Number(tokenId);
     switch (tokenIdNumber) {
       case 1: {
         return {
           name: "The Butcher",
-          description: "You hunted 5 wild boars - entitlement of r3plica",
+          description: "You hunted 5 wild boars - achievement of r3plica",
           image: "https://r3plica-web.vercel.app/assets/medal.gif",
         };
       }
       case 2: {
         return {
           name: "Decent Hunter",
-          description: "You achieved 10 level - entitlement of r3plica",
+          description: "You achieved 10 level - achievement of r3plica",
           image: "https://r3plica-web.vercel.app/assets/medal.gif",
         };
       }
@@ -59,14 +59,14 @@ export class MetadataController {
         return {
           name: "Brutal Slaughter",
           description:
-            "You killed 10 boars and one bear - entitlement of r3plica",
+            "You killed 10 boars and one bear - achievement of r3plica",
           image: "https://r3plica-web.vercel.app/assets/medal.gif",
         };
       }
       case 4: {
         return {
           name: "The Greatest Hunter",
-          description: "You killed boss bear - entitlement of r3plica",
+          description: "You killed boss bear - achievement of r3plica",
           image: "https://r3plica-web.vercel.app/assets/medal.gif",
         };
       }

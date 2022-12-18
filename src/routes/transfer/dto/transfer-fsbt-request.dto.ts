@@ -15,5 +15,5 @@ export class TransferFsbtRequestDto {
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
-  entitlementIds: number[];
+  achievementIds: number[];
 }

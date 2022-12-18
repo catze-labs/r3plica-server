@@ -21,9 +21,9 @@ model user {
   itemTransfers itemTransfer[]
   itemMappings  itemMapping[]
 
-  entitlementTokens    entitlementToken[]
-  entitlementTransfers entitlementTransfer[]
-  entitlementMappings  entitlementMapping[]
+  achievementTokens    achievementToken[]
+  achievementTransfers achievementTransfer[]
+  achievementMappings  achievementMapping[]
 
   profileToken    profileToken?
   profileMint     profileMint[]
@@ -80,22 +80,22 @@ model itemMapping {
   updated         DateTime     @default(now()) @updatedAt @db.DateTime(6)
 }
 
-model entitlementToken {
+model achievementToken {
   tokenId            String               @id
-  entitlementId      Int
+  achievementId      Int
   contractAddress    String
   playFabId          String?
   user               user?                @relation(fields: [playFabId], references: [playFabId])
   created            DateTime             @default(now()) @db.DateTime(6)
   updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
-  entitlementMapping entitlementMapping[]
+  achievementMapping achievementMapping[]
 }
 
-model entitlementTransfer {
+model achievementTransfer {
   id              Int      @id @default(autoincrement())
   txHash          String
   txStatus        Boolean?
-  entitlementId   Int
+  achievementId   Int
   playFabId       String
   tokenId         String?
   contractAddress String
@@ -104,15 +104,15 @@ model entitlementTransfer {
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
-model entitlementMapping {
+model achievementMapping {
   id                 Int              @id @default(autoincrement())
   txHash             String
   txStatus           Boolean?
   contractAddress    String
   profileTokenId     String
   profileToken       profileToken     @relation(fields: [profileTokenId], references: [tokenId])
-  entitlementTokenId String
-  entitlementToken   entitlementToken @relation(fields: [entitlementTokenId], references: [tokenId])
+  achievementTokenId String
+  achievementToken   achievementToken @relation(fields: [achievementTokenId], references: [tokenId])
 
   playFabId String
   user      user     @relation(fields: [playFabId], references: [playFabId])
@@ -129,7 +129,7 @@ model profileToken {
   user               user                 @relation(fields: [playFabId], references: [playFabId])
   created            DateTime             @default(now()) @db.DateTime(6)
   updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
-  entitlementMapping entitlementMapping[]
+  achievementMapping achievementMapping[]
   itemMapping        itemMapping[]
 }
 

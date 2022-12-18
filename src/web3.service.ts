@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { entitlementToken, itemToken, user } from "@prisma/client";
+import { itemToken, user } from "@prisma/client";
 import Web3 from "web3";
 import {
   TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
@@ -28,8 +28,8 @@ export class Web3Service {
     });
   }
 
-  async getEntitlementTokenMetadata(tokenId: string) {
-    return this.prismaService.entitlementToken.findUnique({
+  async getAchievementTokenMetadata(tokenId: string) {
+    return this.prismaService.achievementToken.findUnique({
       where: {
         tokenId,
       },
@@ -53,8 +53,8 @@ export class Web3Service {
       },
     });
 
-    const entitlementTransfers =
-      await this.prismaService.entitlementTransfer.findMany({
+    const achievementTransfers =
+      await this.prismaService.achievementTransfer.findMany({
         where: {
           playFabId,
         },
@@ -63,14 +63,14 @@ export class Web3Service {
     return {
       profileTransfers,
       itemTransfers,
-      entitlementTransfers,
+      achievementTransfers,
     };
   }
 
   async transferFsbtToWallet(
     playFabId: string,
     itemIds: number[],
-    entitlementIds: number[]
+    achievementIds: number[]
   ) {
     const user: user = await this.prismaService.user.findUnique({
       where: {
@@ -93,136 +93,90 @@ export class Web3Service {
       });
     }
 
-    const itemTxList = [];
-    const entitlementTxList = [];
-    const itemTokens: itemToken[] = await this.prismaService.itemToken.findMany(
-      {
+    const achievementTokens =
+      await this.prismaService.achievementToken.findMany({
         where: {
-          playFabId: playFabId,
-          itemId: {
-            in: itemIds,
-          },
-        },
-      }
-    );
-    const itemContract = new this.web3.eth.Contract(
-      TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
-      TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
-    );
-
-    for (const itemToken of itemTokens) {
-      const encoded = itemContract.methods
-        .limitedTransfer(walletAddress, 1)
-        .encodeABI();
-
-      // Get the gas limit
-      const block = await this.web3.eth.getBlock("latest");
-      const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
-      // Create the transaction
-      const tx = {
-        gas: gasLimit,
-        to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-        data: encoded,
-      };
-
-      try {
-        // Sign the transaction
-        const signedTx = await this.web3.eth.accounts.signTransaction(
-          tx,
-          process.env.PRIVATE_KEY
-        );
-
-        // Get tx receipt
-        const receipt = await this.web3.eth.sendSignedTransaction(
-          signedTx.rawTransaction
-        );
-
-        // Create itemTransfer history
-        await this.prismaService.itemTransfer.create({
-          data: {
-            playFabId: playFabId,
-            txHash: receipt.transactionHash,
-            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-            itemId: itemToken.itemId,
-          },
-        });
-
-        itemTxList.push({
-          itemId: itemToken.itemId,
-          txHash: receipt.transactionHash,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    // Entitlements
-    const entitlementTokens: entitlementToken[] =
-      await this.prismaService.entitlementToken.findMany({
-        where: {
-          playFabId: playFabId,
-          entitlementId: {
-            in: entitlementIds,
+          playFabId,
+          achievementId: {
+            in: achievementIds,
           },
         },
       });
-    const entitlementContract = new this.web3.eth.Contract(
-      TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
-      TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
-    );
+    const itemTokens = await this.prismaService.itemToken.findMany({
+      where: {
+        playFabId,
+        itemId: {
+          in: itemIds,
+        },
+      },
+    });
 
-    for (const entitlementToken of entitlementTokens) {
-      const encoded = entitlementContract.methods
-        .limitedTransfer(walletAddress, 1)
-        .encodeABI();
+    let achievementTokenIds = [];
+    let profileIdsByAchievementIds = [];
+    let itemTokenIds = [];
+    let profileIdsByItemIds = [];
 
-      // Get the gas limit
-      const block = await this.web3.eth.getBlock("latest");
-      const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
-      // Create the transaction
-      const tx = {
-        gas: gasLimit,
-        to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-        data: encoded,
-      };
-
-      try {
-        // Sign the transaction
-        const signedTx = await this.web3.eth.accounts.signTransaction(
-          tx,
-          process.env.PRIVATE_KEY
-        );
-
-        // Get tx receipt
-        const receipt = await this.web3.eth.sendSignedTransaction(
-          signedTx.rawTransaction
-        );
-
-        // Create itemTransfer history
-        await this.prismaService.entitlementTransfer.create({
-          data: {
-            playFabId: playFabId,
-            txHash: receipt.transactionHash,
-            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-            entitlementId: entitlementToken.entitlementId,
-          },
-        });
-
-        entitlementTxList.push({
-          itemId: entitlementToken.entitlementId,
-          txHash: receipt.transactionHash,
-        });
-      } catch (err) {
-        console.log(err);
-      }
+    for (const achievementToken of achievementTokens) {
+      achievementTokenIds.push(achievementToken.tokenId);
+      profileIdsByAchievementIds.push(playFabId);
+    }
+    for (const itemToken of itemTokens) {
+      itemTokenIds.push(itemToken.tokenId);
+      profileIdsByItemIds.push(playFabId);
     }
 
-    return {
-      itemTxList,
-      entitlementTxList,
+    const contract = new this.web3.eth.Contract(
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+    const encoded = contract.methods
+      .batchSetQuestAndItemMaps(
+        achievementIds,
+        profileIdsByAchievementIds,
+        itemIds,
+        profileIdsByItemIds
+      )
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
     };
+
+    let txHash;
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      // Get tx receipt
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+      txHash = receipt.transactionHash;
+
+      // TODO: create achievementTransfers, itemTransfers
+      // await this.prismaService.itemTransfer.create({
+      //   data: {
+      //     playFabId: playFabId,
+      //     txHash,
+      //     contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+      //     itemId: itemToken.itemId,
+      //   },
+      // });
+    } catch (err) {
+      console.log(err);
+    }
+
+    return { txHash };
   }
 
   async bindIfsbtToProfile(profileTokenId: string, itemTokenId: string) {
@@ -262,7 +216,7 @@ export class Web3Service {
     }
   }
 
-  async bindQfsbtToProfile(profileTokenId: string, entitlementTokenId: string) {
+  async bindQfsbtToProfile(profileTokenId: string, achievementTokenId: string) {
     const contract = new this.web3.eth.Contract(
       TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
@@ -271,7 +225,7 @@ export class Web3Service {
     const encoded = contract.methods
       .setQuestIdAndProfileId(
         Number(profileTokenId),
-        Number(entitlementTokenId)
+        Number(achievementTokenId)
       )
       .encodeABI();
 

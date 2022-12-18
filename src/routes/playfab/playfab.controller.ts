@@ -13,7 +13,7 @@ import { PlayFabRequestDto } from "./dto/playfab-request.dto";
 import { UserLoginDto } from "./dto/user-login.dto";
 import { UserRegisterDto } from "./dto/user-register.dto";
 import {
-  entitlementsApiResponse,
+  achievementsApiResponse,
   itemsApiResponse,
   loginApiResponse,
   registerApiResponse,
@@ -53,9 +53,9 @@ export class PlayFabController {
     };
   }
 
-  @Get("entitlements")
-  @ApiResponse(entitlementsApiResponse)
-  async getEntitlements(@Query() playFabRequestDto: PlayFabRequestDto) {
+  @Get("achievements")
+  @ApiResponse(achievementsApiResponse)
+  async getAchievements(@Query() playFabRequestDto: PlayFabRequestDto) {
     const { sessionTicket } = playFabRequestDto;
     const userInfo =
       await this.PlayFabService.validateAndGetUserInfoBySessionTicket(
@@ -63,7 +63,7 @@ export class PlayFabController {
       );
 
     return {
-      entitlements: await this.PlayFabService.getUserEntitlements(
+      achievements: await this.PlayFabService.getUserAchievements(
         userInfo.PlayFabId
       ),
     };

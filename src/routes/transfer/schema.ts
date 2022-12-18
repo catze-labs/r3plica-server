@@ -9,10 +9,10 @@ const itemTransfer = {
   updated: { type: "string", format: "date-time" },
 };
 
-const entitlementTransfer = {
+const achievementTransfer = {
   id: { type: "integer" },
   txHash: { type: "string" },
-  entitlement: { type: "object" },
+  achievement: { type: "object" },
   playFabId: { type: "string" },
   tokenId: { type: "string", nullable: true },
   contractAddress: { type: "string" },
@@ -21,7 +21,7 @@ const entitlementTransfer = {
 };
 
 export const getTransferHistoryResponse = {
-  description: "Return item, entitlement transfer records",
+  description: "Return item, achievement transfer records",
   status: 200,
   schema: {
     type: "object",
@@ -30,16 +30,16 @@ export const getTransferHistoryResponse = {
         type: "array",
         items: { type: "object", properties: itemTransfer },
       },
-      entitlementTransfers: {
+      achievementTransfers: {
         type: "array",
-        items: { type: "object", properties: entitlementTransfer },
+        items: { type: "object", properties: achievementTransfer },
       },
     },
   },
 };
 
 export const postTransferResponse = {
-  description: "Return item, entitlement transfer record",
+  description: "Return item, achievement transfer record",
   status: 200,
   schema: {
     type: "object",

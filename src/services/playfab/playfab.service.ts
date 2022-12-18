@@ -7,8 +7,8 @@ import { user } from "@prisma/client";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
 import {
-  UserEntitlement,
-  UserEntitlementWrapper,
+  UserAchievement,
+  UserAchievementWrapper,
   UserItem,
   UserItemWrapper,
 } from "src/types";
@@ -220,7 +220,7 @@ export class PlayFabService {
     });
   }
 
-  async getUserEntitlements(playFabId: string) {
+  async getUserAchievements(playFabId: string) {
     const path = "/Server/ExecuteCloudScript";
 
     const params = {
@@ -246,31 +246,31 @@ export class PlayFabService {
     }
 
     // Parse axios response data
-    const userEntitlements: UserEntitlement[] =
+    const userAchievements: UserAchievement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
     // Transfer history
-    const entitlementTransfers =
-      await this.prismaService.entitlementTransfer.findMany({
+    const achievementTransfers =
+      await this.prismaService.achievementTransfer.findMany({
         where: {
           playFabId,
         },
       });
 
-    return userEntitlements.map((quest) => {
-      const wrappedItem: UserEntitlementWrapper = {
-        ...quest,
+    return userAchievements.map((userAchievement) => {
+      const wrappedItem: UserAchievementWrapper = {
+        ...userAchievement,
         isTransferred: false,
         transfer: null,
       };
 
-      for (const entitlementTransfer of entitlementTransfers) {
+      for (const achievementTransfer of achievementTransfers) {
         if (
-          entitlementTransfer.entitlementId === quest.questID &&
-          entitlementTransfer.txStatus
+          achievementTransfer.achievementId === userAchievement.questID &&
+          achievementTransfer.txStatus
         ) {
           wrappedItem.isTransferred = true;
-          wrappedItem.transfer = entitlementTransfer;
+          wrappedItem.transfer = achievementTransfer;
         }
       }
 

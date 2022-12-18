@@ -33,7 +33,7 @@ export class TransferController {
   async transferFsbtToUser(
     @Body() transferFsbtRequestDto: TransferFsbtRequestDto
   ) {
-    const { sessionTicket, itemIds, entitlementIds } = transferFsbtRequestDto;
+    const { sessionTicket, itemIds, achievementIds } = transferFsbtRequestDto;
 
     const userInfo =
       await this.playFabService.validateAndGetUserInfoBySessionTicket(
@@ -43,7 +43,7 @@ export class TransferController {
     return await this.web3Service.transferFsbtToWallet(
       userInfo.PlayFabId,
       itemIds,
-      entitlementIds
+      achievementIds
     );
   }
 

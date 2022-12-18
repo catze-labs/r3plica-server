@@ -1,4 +1,4 @@
-import { entitlementTransfer, itemTransfer } from "@prisma/client";
+import { achievementTransfer, itemTransfer } from "@prisma/client";
 
 export type UserItem = {
   itemName: string;
@@ -13,7 +13,7 @@ export type UserItem = {
   sockets: any[];
 };
 
-export enum EntitlementState {
+export enum AchievementState {
   "ON_GOING" = 0,
   "COMPLETE" = 1,
   "ABANDONED" = 2,
@@ -21,11 +21,11 @@ export enum EntitlementState {
   "TURNED_IN" = 4,
 }
 
-export type UserEntitlement = {
+export type UserAchievement = {
   questID: number;
   questTitle: string;
   description: string;
-  state: EntitlementState;
+  state: AchievementState;
   objectives: any[];
 };
 
@@ -34,7 +34,7 @@ export interface UserItemWrapper extends UserItem {
   transfer?: itemTransfer;
 }
 
-export interface UserEntitlementWrapper extends UserEntitlement {
+export interface UserAchievementWrapper extends UserAchievement {
   isTransferred: boolean;
-  transfer?: entitlementTransfer;
+  transfer?: achievementTransfer;
 }

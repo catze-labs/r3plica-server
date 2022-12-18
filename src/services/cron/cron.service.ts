@@ -104,22 +104,22 @@ export class CronService {
       });
     }
 
-    // Update entitlement transfer tx status
-    const entitlementTransfers =
-      await this.prismaService.entitlementTransfer.findMany({
+    // Update achievement transfer tx status
+    const achievementTransfers =
+      await this.prismaService.achievementTransfer.findMany({
         where: {
           txStatus: null,
         },
       });
 
-    for (const entitlementTransfer of entitlementTransfers) {
+    for (const achievementTransfer of achievementTransfers) {
       const parsedData = await this.getTransactionStatus(
-        entitlementTransfer.txHash
+        achievementTransfer.txHash
       );
 
       await this.prismaService.itemTransfer.update({
         where: {
-          id: entitlementTransfer.id,
+          id: achievementTransfer.id,
         },
         data: {
           txStatus: parsedData["result"]["status"] == "1",
@@ -147,21 +147,21 @@ export class CronService {
       });
     }
 
-    // Update profile token - entitlement token mapping tx status
-    const entitlementMappings =
-      await this.prismaService.entitlementMapping.findMany({
+    // Update profile token - achievement token mapping tx status
+    const achievementMappings =
+      await this.prismaService.achievementMapping.findMany({
         where: {
           txStatus: null,
         },
       });
 
-    for (const entitlementMapping of entitlementMappings) {
+    for (const achievementMapping of achievementMappings) {
       const parsedData = await this.getTransactionStatus(
-        entitlementMapping.txHash
+        achievementMapping.txHash
       );
-      await this.prismaService.entitlementMapping.update({
+      await this.prismaService.achievementMapping.update({
         where: {
-          id: entitlementMapping.id,
+          id: achievementMapping.id,
         },
         data: {
           txStatus: parsedData["result"]["status"] == "1",
@@ -171,7 +171,7 @@ export class CronService {
   }
 
   @Cron("*/3 * * * *")
-  async updateUserItemAndEntitlement() {
+  async updateUserItemAndAchievement() {
     const users = await this.prismaService.user.findMany({});
 
     for (const user of users) {
@@ -210,21 +210,21 @@ export class CronService {
         );
       }
 
-      const entitlements = await this.playFabService.getUserEntitlements(
+      const achievements = await this.playFabService.getUserAchievements(
         user.playFabId
       );
-      for (const entitlement of entitlements) {
-        const entitlementToken =
-          await this.prismaService.entitlementToken.findFirst({
+      for (const achievement of achievements) {
+        const achievementToken =
+          await this.prismaService.achievementToken.findFirst({
             where: {
               contractAddress: TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
-              entitlementId: entitlement.questID,
+              achievementId: achievement.questID,
               playFabId: null,
             },
           });
-        await this.prismaService.entitlementToken.update({
+        await this.prismaService.achievementToken.update({
           where: {
-            tokenId: entitlementToken.tokenId,
+            tokenId: achievementToken.tokenId,
           },
           data: {
             playFabId: user.playFabId,
@@ -232,7 +232,7 @@ export class CronService {
         });
         await this.web3Service.bindQfsbtToProfile(
           profileToken.tokenId,
-          entitlementToken.tokenId
+          achievementToken.tokenId
         );
       }
     }
