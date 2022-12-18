@@ -346,9 +346,13 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
+    const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
+
     // Encode the function call
     const encoded = contract.methods
-      .limitedTransfer(profileToken.tokenId)
+      .limitedTransfer(deployAddress, user.walletAddress, profileToken.tokenId)
       .encodeABI();
 
     // Get the gas limit
