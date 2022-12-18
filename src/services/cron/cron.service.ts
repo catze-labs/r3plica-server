@@ -24,6 +24,37 @@ export class CronService {
 
   @Cron("*/3 * * * *")
   async updateTransactionStatus() {
+    // profile minting tx status update
+    const profileMints = await this.prismaService.profileMint.findMany({
+      where: {
+        txStatus: null,
+      },
+    });
+
+    for (const profileMint of profileMints) {
+      const url = this.getBSCScanUrl(profileMint.txHash);
+
+      // Send get request
+      let response: any;
+      try {
+        const { data } = await axios.get(url);
+
+        response = data;
+      } catch (error) {
+        response = error.response;
+      }
+
+      const parsedData = axiosReturnOrThrow(response);
+      await this.prismaService.profileMint.update({
+        where: {
+          id: profileMint.id,
+        },
+        data: {
+          txStatus: parsedData["result"]["status"] == "1",
+        },
+      });
+    }
+
     // profile transfer tx status update
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
