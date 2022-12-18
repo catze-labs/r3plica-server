@@ -12,8 +12,8 @@ export function makeRandomAlphaNumericString(length: number): string {
 }
 
 export function axiosReturnOrThrow(response: any) {
-  if (response["status"] === "OK") {
-    return response["data"];
+  if (response["status"] === "OK" || response["status"] === "1") {
+    return response["data"] || response["result"];
   } else {
     const data = response["data"];
     const statusCode = data["code"];

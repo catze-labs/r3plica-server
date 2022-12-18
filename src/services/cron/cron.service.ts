@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
 import { Web3Service } from "src/web3.service";
+import { achievementToken, itemToken, profileMint } from "@prisma/client";
 
 @Injectable()
 export class CronService {
@@ -21,18 +22,19 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  @Cron("*/3 * * * *")
+  @Cron("*/3 * * * * *")
   async updateTransactionStatus() {
     // Update profile mint tx status
-    const profileMints = await this.prismaService.profileMint.findMany({
-      where: {
-        txStatus: null,
-      },
-    });
+    const profileMints: profileMint[] =
+      await this.prismaService.profileMint.findMany({
+        where: {
+          txStatus: null,
+        },
+      });
 
     for (const profileMint of profileMints) {
       const parsedData = await this.getTransactionStatus(profileMint.txHash);
-      const txStatus = parsedData["result"]["status"] == "1";
+      const txStatus = parsedData["status"] == "1";
       await this.prismaService.profileMint.update({
         where: {
           id: profileMint.id,
@@ -42,9 +44,11 @@ export class CronService {
         },
       });
       if (txStatus) {
+        // tokenId need
+        const tokenId = "";
         await this.prismaService.profileToken.create({
           data: {
-            tokenId: profileMint.tokenId,
+            tokenId,
             txHash: profileMint.txHash,
             txStatus,
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -73,7 +77,7 @@ export class CronService {
           id: profileTransfer.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus: parsedData["status"] == "1",
         },
       });
     }
@@ -93,7 +97,7 @@ export class CronService {
           id: itemTransfer.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus: parsedData["status"] == "1",
         },
       });
     }
@@ -116,7 +120,7 @@ export class CronService {
           id: achievementTransfer.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus: parsedData["status"] == "1",
         },
       });
     }
@@ -136,7 +140,7 @@ export class CronService {
           id: itemMapping.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus: parsedData["status"] == "1",
         },
       });
     }
@@ -158,13 +162,13 @@ export class CronService {
           id: achievementMapping.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus: parsedData["status"] == "1",
         },
       });
     }
   }
 
-  @Cron("*/2 * * * *")
+  @Cron("*/3 * * * * *")
   async updateUserItemAndAchievement() {
     const users = await this.prismaService.user.findMany({});
 
@@ -190,6 +194,7 @@ export class CronService {
           },
         });
 
+        if (!itemToken) continue;
         await Promise.all([
           this.prismaService.itemToken.update({
             where: {
@@ -226,6 +231,8 @@ export class CronService {
               playFabId: null,
             },
           });
+
+        if (!achievementToken) continue;
         await Promise.all([
           this.prismaService.achievementToken.update({
             where: {
