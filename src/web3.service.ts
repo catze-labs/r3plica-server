@@ -1,9 +1,13 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { user } from "@prisma/client";
+import { entitlementToken, itemToken, user } from "@prisma/client";
 import Web3 from "web3";
 import {
+  TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
+  TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
+  TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
 import { PrismaService } from "./prisma.service";
 
@@ -82,50 +86,120 @@ export class Web3Service {
       });
     }
 
-    // TODO: Call contract
-    //
-    // const contract = new this.web3.eth.Contract(
-    //   TESTNET_IMPL_CONTRACT_ABI,
-    //   TESTNET_PROXY_CONTRACT_ADDRESS
-    // );
-    //
-    // // TODO : Inject data in contract
-    // // Encode the function call
-    // const encoded = contract.methods.attest(walletAddress, 1).encodeABI();
-    //
-    // // Get the gas limit
-    // const block = await this.web3.eth.getBlock("latest");
-    // const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-    //
-    // // Create the transaction
-    // const tx = {
-    //   gas: gasLimit,
-    //   to: TESTNET_PROXY_CONTRACT_ADDRESS,
-    //   data: encoded,
-    // };
-    //
-    // try {
-    //   // Sign the transaction
-    //   this.web3.eth.accounts
-    //     .signTransaction(tx, process.env.PRIVATE_KEY)
-    //     .then((signed) => {
-    //       // TODO : Insert Transfer row in DB
-    //       this.web3.eth
-    //         .sendSignedTransaction(signed.rawTransaction)
-    //         .on("receipt", console.log);
-    //     });
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    // Item
+    const itemTokens: itemToken[] = await this.prismaService.itemToken.findMany(
+      {
+        where: {
+          playFabId: playFabId,
+          itemId: {
+            in: itemIds,
+          },
+        },
+      }
+    );
+    const itemContract = new this.web3.eth.Contract(
+      TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
+    );
 
-    // TODO: Create itemTransfer, entitlementTransfer records.
-    // await this.prismaService.itemTransfer.create({
-    //   data: {}
-    // });
-    //
-    // await this.prismaService.entitlementTransfer.create({
-    //   data: {}
-    // });
+    for (let itemToken of itemTokens) {
+      const encoded = itemContract.methods
+        .limitedTransfer(walletAddress, 1)
+        .encodeABI();
+
+      // Get the gas limit
+      const block = await this.web3.eth.getBlock("latest");
+      const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+      // Create the transaction
+      const tx = {
+        gas: gasLimit,
+        to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+        data: encoded,
+      };
+
+      try {
+        // Sign the transaction
+        const signedTx = await this.web3.eth.accounts.signTransaction(
+          tx,
+          process.env.PRIVATE_KEY
+        );
+
+        // Get tx receipt
+        const receipt = await this.web3.eth.sendSignedTransaction(
+          signedTx.rawTransaction
+        );
+
+        // Create itemTransfer history
+        await this.prismaService.itemTransfer.create({
+          data: {
+            playFabId: playFabId,
+            txHash: receipt.transactionHash,
+            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+            itemId: itemToken.itemId,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // Entitlements
+    const entitlementTokens: entitlementToken[] =
+      await this.prismaService.entitlementToken.findMany({
+        where: {
+          playFabId: playFabId,
+          entitlementId: {
+            in: entitlementIds,
+          },
+        },
+      });
+    const entitlementContract = new this.web3.eth.Contract(
+      TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    for (let entitlementToken of entitlementTokens) {
+      const encoded = entitlementContract.methods
+        .limitedTransfer(walletAddress, 1)
+        .encodeABI();
+
+      // Get the gas limit
+      const block = await this.web3.eth.getBlock("latest");
+      const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+      // Create the transaction
+      const tx = {
+        gas: gasLimit,
+        to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+        data: encoded,
+      };
+
+      try {
+        // Sign the transaction
+        const signedTx = await this.web3.eth.accounts.signTransaction(
+          tx,
+          process.env.PRIVATE_KEY
+        );
+
+        // Get tx receipt
+        const receipt = await this.web3.eth.sendSignedTransaction(
+          signedTx.rawTransaction
+        );
+
+        // Create itemTransfer history
+        await this.prismaService.entitlementTransfer.create({
+          data: {
+            playFabId: playFabId,
+            txHash: receipt.transactionHash,
+            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+            entitlementId: entitlementToken.entitlementId,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 
   async mintPAFSBT(user: user) {
