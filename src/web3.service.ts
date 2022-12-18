@@ -399,39 +399,16 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
-    // Encode the function call
-    const encoded = contract.methods
+    contract.methods
       .getProfileId(ethers.utils.formatBytes32String(playFabId))
-      .encodeABI();
-
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
-    // Create the transaction
-    const tx = {
-      gas: gasLimit,
-      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-      data: encoded,
-    };
-
-    let profileTokenId;
-
-    try {
-      // Sign the transaction
-      const signedTx = await this.web3.eth.accounts.signTransaction(
-        tx,
-        process.env.PRIVATE_KEY
-      );
-
-      const receipt = await this.web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction
-      );
-
-      console.log(receipt);
-      return receipt.transactionHash;
-    } catch (err) {
-      console.log(err);
-    }
+      .call((err, result) => {
+        if (err) {
+          console.log("err:", err);
+          return;
+        } else {
+          return result[0];
+        }
+      });
+    return;
   }
 }
