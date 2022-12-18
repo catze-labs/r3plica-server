@@ -46,4 +46,17 @@ export class TransferController {
       entitlementIds
     );
   }
+
+  @Post("profile-transfer")
+  @ApiResponse(postTransferResponse)
+  async transferProfileFsbtToUser(@Body() transferFsbtDto: TransferFsbtDto) {
+    const { sessionTicket } = transferFsbtDto;
+
+    const userInfo =
+      await this.playFabService.validateAndGetUserInfoBySessionTicket(
+        sessionTicket
+      );
+
+    return await this.web3Service.profileFsbtToWallet(userInfo.PlayFabId);
+  }
 }

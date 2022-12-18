@@ -162,6 +162,74 @@ export class Web3Service {
         signedTx.rawTransaction
       );
 
+      await this.prismaService.profileMint.create({
+        data: {
+          playFabId: user.playFabId,
+          txHash: receipt.transactionHash,
+          contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+        },
+      });
+
+      Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async profileFsbtToWallet(playFabId: string) {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        playFabId,
+      },
+    });
+
+    if (!user.walletAddress) {
+      throw new NotFoundException("User wallet is not linked");
+    }
+
+    const mintedToken = await this.prismaService.profileToken.findFirst({
+      where: {
+        playFabId,
+      },
+    });
+
+    if (!mintedToken) {
+      throw new NotFoundException("User has not minted PAFSBT token");
+    }
+
+    // TODO : Inject data in contract
+    const contract = new this.web3.eth.Contract(
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    // Encode the function call
+    const encoded = contract.methods
+      .limitedTransfer(mintedToken.tokenId)
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
+    };
+
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+
       await this.prismaService.profileTransfer.create({
         data: {
           playFabId: user.playFabId,
