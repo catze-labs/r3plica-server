@@ -237,7 +237,10 @@ export class CronService {
     });
 
     users.filter(
-      (user) => !user.profileToken && user.profileMint["txStatus"] == false
+      (user) =>
+        !user.profileToken &&
+        user.profileMint["txStatus"] !== null &&
+        user.profileMint["txStatus"] !== true
     );
 
     for (const user of users) {
