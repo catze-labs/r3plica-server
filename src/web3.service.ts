@@ -305,7 +305,7 @@ export class Web3Service {
         signedTx.rawTransaction
       );
       console.log("attest receipt:", receipt);
-      const tokenId = this.getProfileTokenId(user.playFabId);
+      const tokenId = await this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
           playFabId: user.playFabId,
@@ -392,22 +392,20 @@ export class Web3Service {
     }
   }
 
-  getProfileTokenId(playFabId: string): string {
+  async getProfileTokenId(playFabId: string): Promise<string> {
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
-    contract.methods
+    const result = await contract.methods
       .getProfileId(ethers.utils.formatBytes32String(playFabId))
-      .call((err, result) => {
-        if (err) {
-          console.log("err:", err);
-        } else {
-          const profileTokenId: string = result[0];
-          return profileTokenId;
-        }
-      });
+      .call();
+
+    if (Array.isArray(result)) {
+      return result[0];
+    }
+
     return "0";
   }
 }
