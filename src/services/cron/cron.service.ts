@@ -20,7 +20,7 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  async getTransactionStatus(txHash: string) {
+  private async getTransactionStatus(txHash: string) {
     const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
 
     let response: any;
@@ -37,7 +37,7 @@ export class CronService {
 
   @Cron("*/3 * * * *")
   async updateTransactionStatus() {
-    // profile minting tx status update
+    // Update profile mint tx status
     const profileMints = await this.prismaService.profileMint.findMany({
       where: {
         txStatus: null,
@@ -56,7 +56,7 @@ export class CronService {
       });
     }
 
-    // profile transfer tx status update
+    // Update profile transfer tx status
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
         txStatus: null,
@@ -78,7 +78,7 @@ export class CronService {
       });
     }
 
-    // Item transfer tx status update
+    // Update item transfer tx status
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
         txStatus: null,
@@ -98,7 +98,7 @@ export class CronService {
       });
     }
 
-    // Entitlement transfer tx status update
+    // Update entitlement transfer tx status
     const entitlementTransfers =
       await this.prismaService.entitlementTransfer.findMany({
         where: {
@@ -121,14 +121,14 @@ export class CronService {
       });
     }
 
-    // profile token - item token mapping tx status update
+    // Update profile token - item token mapping tx status
     const itemMappings = await this.prismaService.itemMapping.findMany({
       where: {
         txStatus: null,
       },
     });
 
-    for (let itemMapping of itemMappings) {
+    for (const itemMapping of itemMappings) {
       const parsedData = await this.getTransactionStatus(itemMapping.txHash);
 
       await this.prismaService.itemMapping.update({
@@ -141,7 +141,7 @@ export class CronService {
       });
     }
 
-    // profile token - entitlement token mapping tx status update
+    // Update profile token - entitlement token mapping tx status
     const entitlementMappings =
       await this.prismaService.entitlementMapping.findMany({
         where: {
@@ -149,7 +149,7 @@ export class CronService {
         },
       });
 
-    for (let entitlementMapping of entitlementMappings) {
+    for (const entitlementMapping of entitlementMappings) {
       const parsedData = await this.getTransactionStatus(
         entitlementMapping.txHash
       );
