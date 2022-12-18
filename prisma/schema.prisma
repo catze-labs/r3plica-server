@@ -23,9 +23,9 @@ model user {
   achievementTokens    achievementToken[]
   achievementTransfers achievementTransfer[]
 
-  profileToken    profileToken?
-  profileMint     profileMint[]
-  profileTransfer profileTransfer[]
+  profileToken     profileToken?
+  profileMints     profileMint[]
+  profileTransfers profileTransfer[]
 }
 
 model nonce {
@@ -87,8 +87,6 @@ model achievementTransfer {
 
 model profileToken {
   tokenId         String   @id
-  txHash          String
-  txStatus        Boolean?
   contractAddress String
   playFabId       String   @unique
   user            user     @relation(fields: [playFabId], references: [playFabId])

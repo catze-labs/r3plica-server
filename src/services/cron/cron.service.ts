@@ -223,20 +223,25 @@ export class CronService {
   @Cron("*/1 * * * *")
   async mintProfileTokenForced() {
     this.logger.log("mintProfileTokenForced");
-    const users = await this.prismaService.user.findMany({
+    let users = await this.prismaService.user.findMany({
       include: {
         profileToken: true,
-        profileMint: {
-          where: {
-            txStatus: false,
-          },
-        },
       },
     });
 
-    users.filter((user) => !user.profileToken && user.profileMint.length > 0);
-
+    users = users.filter((user) => !user.profileToken);
     for (const user of users) {
+      const profileMint = await this.prismaService.profileMint.findFirst({
+        where: {
+          playFabId: user.playFabId,
+          txStatus: {
+            not: false,
+          },
+        },
+      });
+      if (profileMint != null) {
+        continue;
+      }
       await this.web3Service.mintPAFSBT(user.playFabId);
     }
   }
