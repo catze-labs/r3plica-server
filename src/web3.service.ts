@@ -307,6 +307,8 @@ export class Web3Service {
       await this.prismaService.profileMint.create({
         data: {
           playFabId: user.playFabId,
+          // TODO: fill tokenId
+          tokenId: "",
           txHash: receipt.transactionHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
         },
