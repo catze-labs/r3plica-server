@@ -302,7 +302,6 @@ export class Web3Service {
       const receipt = await this.web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
-      console.log("attest receipt:", receipt);
       const tokenId = await this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
