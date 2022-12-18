@@ -88,7 +88,9 @@ export class Web3Service {
     let profileIdsByAchievementIds = [];
     for (const achievementToken of achievementTokens) {
       achievementTokenIds.push(achievementToken.tokenId);
-      profileIdsByAchievementIds.push(playFabId);
+      profileIdsByAchievementIds.push(
+        ethers.utils.formatBytes32String(playFabId)
+      );
     }
 
     const itemTokens = await this.prismaService.itemToken.findMany({
@@ -103,7 +105,7 @@ export class Web3Service {
     let profileIdsByItemIds = [];
     for (const itemToken of itemTokens) {
       itemTokenIds.push(itemToken.tokenId);
-      profileIdsByItemIds.push(playFabId);
+      profileIdsByItemIds.push(ethers.utils.formatBytes32String(playFabId));
     }
 
     const contract = new this.web3.eth.Contract(
@@ -111,10 +113,10 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
     const encoded = contract.methods
-      .batchSetQuestAndItemMaps(
-        achievementIds,
+      .batchSetAchievementAndItemMaps(
+        achievementTokenIds,
         profileIdsByAchievementIds,
-        itemIds,
+        itemTokenIds,
         profileIdsByItemIds
       )
       .encodeABI();
