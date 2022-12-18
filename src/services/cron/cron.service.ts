@@ -46,14 +46,18 @@ export class CronService {
 
     for (const profileMint of profileMints) {
       const parsedData = await this.getTransactionStatus(profileMint.txHash);
+      const txStatus = parsedData["result"]["status"] == "1";
       await this.prismaService.profileMint.update({
         where: {
           id: profileMint.id,
         },
         data: {
-          txStatus: parsedData["result"]["status"] == "1",
+          txStatus,
         },
       });
+      if (txStatus) {
+        //  TODO: create profileToken record
+      }
     }
 
     // Update profile transfer tx status
