@@ -113,9 +113,6 @@ export class PlayFabService {
       },
     });
 
-    parsedData["profileTokenMintTxHash"] = await this.web3Service.mintPAFSBT(
-      user.playFabId
-    );
     return parsedData;
   }
 
