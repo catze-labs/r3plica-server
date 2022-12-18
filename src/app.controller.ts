@@ -12,8 +12,8 @@ export class AppController {
 
   @Get("/health")
   @ApiTags("Server")
-  getHealth(): boolean {
-    this.web3Service.getProfileTokenId("AAE4E4B2D9684805");
+  async getHealth() {
+    await this.web3Service.getProfileTokenId("8EA94BEC5C76F576");
     return true;
   }
 }
