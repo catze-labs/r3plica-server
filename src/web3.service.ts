@@ -95,7 +95,6 @@ export class Web3Service {
 
     const itemTxList = [];
     const entitlementTxList = [];
-    // Item
     const itemTokens: itemToken[] = await this.prismaService.itemToken.findMany(
       {
         where: {

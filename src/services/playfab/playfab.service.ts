@@ -185,7 +185,7 @@ export class PlayFabService {
       response = error.response;
     }
 
-    // Parsing axios response data
+    // Parse axios response data
     let userItems: UserItem[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
@@ -245,7 +245,7 @@ export class PlayFabService {
       response = error.response;
     }
 
-    // Parsing axios response data
+    // Parse axios response data
     let userEntitlements: UserEntitlement[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 

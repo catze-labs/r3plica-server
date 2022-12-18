@@ -28,16 +28,12 @@ export class SignatureService {
   public async getAddress(
     walletAddress: string,
     signature: string
-  ): Promise<string | undefined> {
+  ): Promise<string> {
     const nonce = await this.nonceService.getNotUsedLatestNonce(walletAddress);
 
     if (nonce !== null) {
       await this.nonceService.updateNonceToUsed(nonce.id);
-
-      let recoveredAddress: string | undefined;
-      recoveredAddress = verifyMessage(nonce.value, signature);
-
-      return recoveredAddress;
+      return verifyMessage(nonce.value, signature);
     }
   }
 }
