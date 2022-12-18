@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { itemToken, user } from "@prisma/client";
+import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
   TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
@@ -102,6 +102,14 @@ export class Web3Service {
           },
         },
       });
+
+    let achievementTokenIds = [];
+    let profileIdsByAchievementIds = [];
+    for (const achievementToken of achievementTokens) {
+      achievementTokenIds.push(achievementToken.tokenId);
+      profileIdsByAchievementIds.push(playFabId);
+    }
+
     const itemTokens = await this.prismaService.itemToken.findMany({
       where: {
         playFabId,
@@ -110,16 +118,8 @@ export class Web3Service {
         },
       },
     });
-
-    let achievementTokenIds = [];
-    let profileIdsByAchievementIds = [];
     let itemTokenIds = [];
     let profileIdsByItemIds = [];
-
-    for (const achievementToken of achievementTokens) {
-      achievementTokenIds.push(achievementToken.tokenId);
-      profileIdsByAchievementIds.push(playFabId);
-    }
     for (const itemToken of itemTokens) {
       itemTokenIds.push(itemToken.tokenId);
       profileIdsByItemIds.push(playFabId);
@@ -163,15 +163,35 @@ export class Web3Service {
       );
       txHash = receipt.transactionHash;
 
-      // TODO: create achievementTransfers, itemTransfers
-      // await this.prismaService.itemTransfer.create({
-      //   data: {
-      //     playFabId: playFabId,
-      //     txHash,
-      //     contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
-      //     itemId: itemToken.itemId,
-      //   },
-      // });
+      let achievementTransferCreateData = [];
+      let itemTransferCreateData = [];
+      for (const achievementToken of achievementTokens) {
+        achievementTransferCreateData.push({
+          playFabId: playFabId,
+          txHash,
+          contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+          achievementId: achievementToken.achievementId,
+        });
+      }
+      for (const itemToken of itemTokens) {
+        itemTransferCreateData.push({
+          playFabId: playFabId,
+          txHash,
+          contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+          itemId: itemToken.itemId,
+        });
+      }
+
+      await Promise.all([
+        this.prismaService.achievementTransfer.createMany({
+          data: achievementTransferCreateData,
+          skipDuplicates: true,
+        }),
+        this.prismaService.itemTransfer.createMany({
+          data: itemTransferCreateData,
+          skipDuplicates: true,
+        }),
+      ]);
     } catch (err) {
       console.log(err);
     }
