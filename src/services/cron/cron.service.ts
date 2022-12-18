@@ -164,7 +164,7 @@ export class CronService {
     }
   }
 
-  @Cron("*/3 * * * *")
+  @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     const users = await this.prismaService.user.findMany({});
 
