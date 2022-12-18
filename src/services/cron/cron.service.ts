@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import {
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "../../constants";
 import axios from "axios";
@@ -56,7 +57,18 @@ export class CronService {
         },
       });
       if (txStatus) {
-        //  TODO: create profileToken record
+        // tempvalue
+        const tokenId = "1";
+
+        await this.prismaService.profileToken.create({
+          data: {
+            tokenId,
+            txHash: profileMint.txHash,
+            txStatus,
+            contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+            playFabId: profileMint.playFabId,
+          },
+        });
       } else {
         //  TODO: retry - send profileMint tx again
       }
