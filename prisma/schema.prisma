@@ -19,11 +19,9 @@ model user {
 
   itemTokens    itemToken[]
   itemTransfers itemTransfer[]
-  itemMappings  itemMapping[]
 
   achievementTokens    achievementToken[]
   achievementTransfers achievementTransfer[]
-  achievementMappings  achievementMapping[]
 
   profileToken    profileToken?
   profileMint     profileMint[]
@@ -42,14 +40,13 @@ model nonce {
 }
 
 model itemToken {
-  tokenId         String        @id
+  tokenId         String   @id
   itemId          Int
   contractAddress String
   playFabId       String?
-  user            user?         @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime      @default(now()) @db.DateTime(6)
-  updated         DateTime      @default(now()) @updatedAt @db.DateTime(6)
-  itemMapping     itemMapping[]
+  user            user?    @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
 model itemTransfer {
@@ -65,30 +62,14 @@ model itemTransfer {
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
-model itemMapping {
-  id              Int          @id @default(autoincrement())
-  txHash          String
-  txStatus        Boolean?
-  contractAddress String
-  profileTokenId  String
-  profileToken    profileToken @relation(fields: [profileTokenId], references: [tokenId])
-  itemTokenId     String
-  itemToken       itemToken    @relation(fields: [itemTokenId], references: [tokenId])
-  playFabId       String
-  user            user         @relation(fields: [playFabId], references: [playFabId])
-  created         DateTime     @default(now()) @db.DateTime(6)
-  updated         DateTime     @default(now()) @updatedAt @db.DateTime(6)
-}
-
 model achievementToken {
-  tokenId            String               @id
-  achievementId      Int
-  contractAddress    String
-  playFabId          String?
-  user               user?                @relation(fields: [playFabId], references: [playFabId])
-  created            DateTime             @default(now()) @db.DateTime(6)
-  updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
-  achievementMapping achievementMapping[]
+  tokenId         String   @id
+  achievementId   Int
+  contractAddress String
+  playFabId       String?
+  user            user?    @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
 model achievementTransfer {
@@ -104,33 +85,15 @@ model achievementTransfer {
   updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
-model achievementMapping {
-  id                 Int              @id @default(autoincrement())
-  txHash             String
-  txStatus           Boolean?
-  contractAddress    String
-  profileTokenId     String
-  profileToken       profileToken     @relation(fields: [profileTokenId], references: [tokenId])
-  achievementTokenId String
-  achievementToken   achievementToken @relation(fields: [achievementTokenId], references: [tokenId])
-
-  playFabId String
-  user      user     @relation(fields: [playFabId], references: [playFabId])
-  created   DateTime @default(now()) @db.DateTime(6)
-  updated   DateTime @default(now()) @updatedAt @db.DateTime(6)
-}
-
 model profileToken {
-  tokenId            String               @id
-  txHash             String
-  txStatus           Boolean?
-  contractAddress    String
-  playFabId          String               @unique
-  user               user                 @relation(fields: [playFabId], references: [playFabId])
-  created            DateTime             @default(now()) @db.DateTime(6)
-  updated            DateTime             @default(now()) @updatedAt @db.DateTime(6)
-  achievementMapping achievementMapping[]
-  itemMapping        itemMapping[]
+  tokenId         String   @id
+  txHash          String
+  txStatus        Boolean?
+  contractAddress String
+  playFabId       String   @unique
+  user            user     @relation(fields: [playFabId], references: [playFabId])
+  created         DateTime @default(now()) @db.DateTime(6)
+  updated         DateTime @default(now()) @updatedAt @db.DateTime(6)
 }
 
 model profileTransfer {
