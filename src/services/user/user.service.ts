@@ -3,8 +3,7 @@ import { PrismaService } from "src/prisma.service";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {
-  }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getUser(playFabId: string) {
     const user = await this.prismaService.user.findUnique({

@@ -4,10 +4,7 @@ import { verifyMessage } from "@ethersproject/wallet";
 
 @Injectable()
 export class SignatureService {
-  constructor(
-    private readonly nonceService: NonceService
-  ) {
-  }
+  constructor(private readonly nonceService: NonceService) {}
 
   public async validateUserAddress(
     apiCallerAddress: string | undefined,

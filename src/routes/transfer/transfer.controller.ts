@@ -12,8 +12,7 @@ export class TransferController {
   constructor(
     private playFabService: PlayFabService,
     private web3Service: Web3Service
-  ) {
-  }
+  ) {}
 
   @Get("transfer-history")
   @ApiResponse(getTransferHistoryResponse)

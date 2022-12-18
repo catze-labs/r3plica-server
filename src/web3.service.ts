@@ -6,7 +6,6 @@ import {
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
 import { PrismaService } from "./prisma.service";
-import { PlayFabService } from "./services/playfab/playfab.service";
 
 @Injectable()
 export class Web3Service {

@@ -27,5 +27,4 @@ import { UserService } from "./user/user.service";
     Web3Service,
   ],
 })
-export class ServicesModule {
-}
+export class ServicesModule {}
