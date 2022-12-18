@@ -21,21 +21,6 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  private async getTransactionStatus(txHash: string) {
-    const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
-
-    let response: any;
-    try {
-      const { data } = await axios.get(url);
-
-      response = data;
-    } catch (error) {
-      response = error.response;
-    }
-
-    return axiosReturnOrThrow(response);
-  }
-
   @Cron("*/3 * * * *")
   async updateTransactionStatus() {
     // Update profile mint tx status
@@ -246,5 +231,20 @@ export class CronService {
         );
       }
     }
+  }
+
+  private async getTransactionStatus(txHash: string) {
+    const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
+
+    let response: any;
+    try {
+      const { data } = await axios.get(url);
+
+      response = data;
+    } catch (error) {
+      response = error.response;
+    }
+
+    return axiosReturnOrThrow(response);
   }
 }

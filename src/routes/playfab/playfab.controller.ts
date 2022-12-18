@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Query } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PlayFabService } from "src/services/playfab/playfab.service";
 import { PlayFabRequestDto } from "./dto/playfab-request.dto";
