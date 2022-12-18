@@ -193,6 +193,26 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "uint256[]", name: "achievementIds", type: "uint256[]" },
+      {
+        internalType: "uint256[]",
+        name: "profileIdsByAchievementIds",
+        type: "uint256[]",
+      },
+      { internalType: "uint256[]", name: "itemIds", type: "uint256[]" },
+      {
+        internalType: "uint256[]",
+        name: "profileIdsByItemIds",
+        type: "uint256[]",
+      },
+    ],
+    name: "batchSetAchievementAndItemMaps",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "burn",
     outputs: [],
@@ -208,15 +228,36 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
   {
     inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
+    name: "getAchievementsIdsByProfileId",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
     name: "getItemIdsByProfileId",
     outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
+    inputs: [{ internalType: "uint256", name: "profileId", type: "uint256" }],
     name: "getPlayfabId",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "bytes32", name: "playfabId", type: "bytes32" }],
+    name: "getProfileId",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
+    name: "getProfileIdByAchievementId",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -224,20 +265,6 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
     name: "getProfileIdByItemId",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "key", type: "uint256" }],
-    name: "getProfileIdByQuestId",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
-    name: "getQuestsIdsByProfileId",
-    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
@@ -319,13 +346,6 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes32", name: "value", type: "bytes32" }],
-    name: "playfabIDMapGetKeys",
-    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
       { internalType: "address", name: "account", type: "address" },
@@ -353,6 +373,25 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "achievementAddress", type: "address" },
+    ],
+    name: "setAchievementAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256[]", name: "keys", type: "uint256[]" },
+      { internalType: "uint256[]", name: "values", type: "uint256[]" },
+    ],
+    name: "setAchievementIdsAndProfileIds",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "string", name: "uri", type: "string" }],
     name: "setBaseTokenURI",
     outputs: [],
@@ -368,29 +407,10 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "key", type: "uint256" },
-      { internalType: "uint256", name: "value", type: "uint256" },
+      { internalType: "uint256[]", name: "keys", type: "uint256[]" },
+      { internalType: "uint256[]", name: "values", type: "uint256[]" },
     ],
-    name: "setItemIdAndProfileId",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "questAddress", type: "address" },
-    ],
-    name: "setQuestAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "key", type: "uint256" },
-      { internalType: "uint256", name: "value", type: "uint256" },
-    ],
-    name: "setQuestIdAndProfileId",
+    name: "setItemIdsAndProfileIds",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -428,6 +448,18 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     name: "totalSupply",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "address", name: "destinationAddress", type: "address" },
+    ],
+    name: "transferFallback",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];
@@ -574,6 +606,13 @@ export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "_profileContract",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "count_", type: "uint256" },
@@ -625,6 +664,17 @@ export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     name: "countOf",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "emitTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -734,6 +784,15 @@ export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [{ internalType: "string", name: "uri", type: "string" }],
     name: "setBaseTokenURI",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "profileContract_", type: "address" },
+    ],
+    name: "setProfileContract",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -917,6 +976,13 @@ export const TESTNET_AAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "_profileContract",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "address", name: "to", type: "address" },
       { internalType: "uint256", name: "count_", type: "uint256" },
@@ -968,6 +1034,17 @@ export const TESTNET_AAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     name: "countOf",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "emitTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1077,6 +1154,15 @@ export const TESTNET_AAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
   {
     inputs: [{ internalType: "string", name: "uri", type: "string" }],
     name: "setBaseTokenURI",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "profileContract_", type: "address" },
+    ],
+    name: "setProfileContract",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -2,14 +2,15 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
+  TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
+  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
   TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
   TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_AAFSBT_IMPL_CONTRACT_ABI,
-  TESTNET_AAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "./constants";
 import { PrismaService } from "./prisma.service";
+import { ethers } from "ethers";
 
 @Injectable()
 export class Web3Service {
@@ -277,8 +278,8 @@ export class Web3Service {
       .attest(
         address,
         1,
-        this.web3.utils.asciiToHex(user.playFabId),
-        this.web3.utils.asciiToHex(user.created.valueOf().toString())
+        ethers.utils.formatBytes32String(user.playFabId),
+        ethers.utils.formatBytes32String(user.created.valueOf().toString())
       )
       .encodeABI();
 
@@ -303,6 +304,7 @@ export class Web3Service {
       const receipt = await this.web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
+      console.log("attest receipt:", receipt);
 
       await this.prismaService.profileMint.create({
         data: {
@@ -386,6 +388,48 @@ export class Web3Service {
       Logger.debug(`mint PAFSBT tx is sent for user ${user.playFabId}`);
 
       return { txHash: receipt.transactionHash };
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getProfileTokenId(playFabId: string) {
+    const contract = new this.web3.eth.Contract(
+      TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    // Encode the function call
+    const encoded = contract.methods
+      .getProfileId(ethers.utils.formatBytes32String(playFabId))
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
+    };
+
+    let profileTokenId;
+
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+
+      console.log(receipt);
+      return receipt.transactionHash;
     } catch (err) {
       console.log(err);
     }
