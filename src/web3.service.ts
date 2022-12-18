@@ -381,13 +381,13 @@ export class Web3Service {
       throw new NotFoundException("User wallet is not linked");
     }
 
-    const mintedToken = await this.prismaService.profileToken.findFirst({
+    const profileToken = await this.prismaService.profileToken.findFirst({
       where: {
         playFabId,
       },
     });
 
-    if (!mintedToken) {
+    if (!profileToken) {
       throw new NotFoundException("User has not minted PAFSBT token");
     }
 
@@ -398,7 +398,7 @@ export class Web3Service {
 
     // Encode the function call
     const encoded = contract.methods
-      .limitedTransfer(mintedToken.tokenId)
+      .limitedTransfer(profileToken.tokenId)
       .encodeABI();
 
     // Get the gas limit
@@ -431,7 +431,7 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+      Logger.debug(`mint PAFSBT tx is sent for user ${user.playFabId}`);
 
       return { txHash: receipt.transactionHash };
     } catch (err) {
