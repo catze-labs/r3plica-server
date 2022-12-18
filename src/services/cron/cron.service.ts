@@ -3,8 +3,8 @@ import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import {
-  TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS,
-  TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+  TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
 } from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
@@ -163,7 +163,7 @@ export class CronService {
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
-            contractAddress: TESTNET_AFSBT_PROXY_CONTRACT_ADDRESS,
+            contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
             itemId: item.itemID,
             playFabId: null,
           },
@@ -187,7 +187,7 @@ export class CronService {
         const entitlementToken =
           await this.prismaService.entitlementToken.findFirst({
             where: {
-              contractAddress: TESTNET_QFSBT_PROXY_CONTRACT_ADDRESS,
+              contractAddress: TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
               entitlementId: entitlement.questID,
               playFabId: null,
             },

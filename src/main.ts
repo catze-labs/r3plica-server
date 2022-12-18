@@ -2,16 +2,11 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import path from "path";
 import { AppModule } from "./app.module";
 import { PrismaService } from "./prisma.service";
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  app.useStaticAssets(path.join(__dirname, "..", "images"), {
-    prefix: `/images/`,
-  });
+  const app = await NestFactory.create(AppModule);
 
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);

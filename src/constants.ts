@@ -431,7 +431,6 @@ export const TESTNET_PAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
     type: "function",
   },
 ];
-
 export const TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS =
   "0xC43c4E74Ed19351afdb2DE3695E6677C22Ec6347";
 export const TESTNET_IAFSBT_IMPL_CONTRACT_ABI: AbiItem[] = [
