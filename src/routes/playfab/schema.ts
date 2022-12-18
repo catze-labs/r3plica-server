@@ -63,10 +63,6 @@ const playFabLoginResponse = {
   },
 };
 
-const linkWalletResponse = {
-  test: { type: "string" },
-};
-
 const itemTransfer = {
   id: { type: "integer" },
   txHash: { type: "string" },
@@ -127,14 +123,6 @@ export const loginApiResponse = {
   description: "User login",
   schema: {
     properties: playFabLoginResponse,
-  },
-};
-
-export const linkWalletApiResponse = {
-  status: 200,
-  description: "Link wallet to user",
-  schema: {
-    properties: linkWalletResponse,
   },
 };
 
