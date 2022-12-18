@@ -8,6 +8,7 @@ import {
 } from "../../constants";
 import axios from "axios";
 import { axiosReturnOrThrow } from "../../utils";
+import { Web3Service } from "src/web3.service";
 
 @Injectable()
 export class CronService {
@@ -15,7 +16,8 @@ export class CronService {
 
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly playFabService: PlayFabService
+    private readonly playFabService: PlayFabService,
+    private readonly web3Service: Web3Service
   ) {}
 
   getBSCScanUrl(txHash: string) {
@@ -155,6 +157,12 @@ export class CronService {
     const users = await this.prismaService.user.findMany({});
 
     for (let user of users) {
+      const profileToken = await this.prismaService.profileToken.findFirst({
+        where: {
+          playFabId: user.playFabId,
+        },
+      });
+
       let items = await this.playFabService.getUserItems(user.playFabId);
       items = items.filter(
         (item) => item.rarity === "Epic" || item.rarity === "Legendary"
@@ -177,7 +185,11 @@ export class CronService {
             playFabId: user.playFabId,
           },
         });
-        //  TODO: contract call
+
+        await this.web3Service.mappingIfsbt(
+          profileToken.tokenId,
+          itemToken.tokenId
+        );
       }
 
       let entitlements = await this.playFabService.getUserEntitlements(
@@ -200,7 +212,10 @@ export class CronService {
             playFabId: user.playFabId,
           },
         });
-        //  TODO: contract call
+        await this.web3Service.mappingQfsbt(
+          profileToken.tokenId,
+          entitlementToken.tokenId
+        );
       }
     }
   }

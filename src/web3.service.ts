@@ -219,13 +219,98 @@ export class Web3Service {
     };
   }
 
+  async mappingIfsbt(profileTokenId: string, itemTokenId: string) {
+    const contract = new this.web3.eth.Contract(
+      TESTNET_IAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    const encoded = contract.methods
+      .setItemIdsAndProfileId(Number(profileTokenId), Number(itemTokenId))
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
+    };
+
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      // Get tx receipt
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+
+      // Create itemTransfer history
+      // await this.prismaService.entitlementTransfer.create({
+      //   data: {
+      //     playFabId: playFabId,
+      //     txHash: receipt.transactionHash,
+      //     contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
+      //     entitlementId: entitlementToken.entitlementId,
+      //   },
+      // });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async mappingQfsbt(profileTokenId: string, entitlementTokenId: string) {
+    const contract = new this.web3.eth.Contract(
+      TESTNET_QAFSBT_IMPL_CONTRACT_ABI,
+      TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS
+    );
+
+    const encoded = contract.methods
+      .setItemIdsAndProfileId(
+        Number(profileTokenId),
+        Number(entitlementTokenId)
+      )
+      .encodeABI();
+
+    // Get the gas limit
+    const block = await this.web3.eth.getBlock("latest");
+    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
+
+    // Create the transaction
+    const tx = {
+      gas: gasLimit,
+      to: TESTNET_QAFSBT_PROXY_CONTRACT_ADDRESS,
+      data: encoded,
+    };
+
+    try {
+      // Sign the transaction
+      const signedTx = await this.web3.eth.accounts.signTransaction(
+        tx,
+        process.env.PRIVATE_KEY
+      );
+
+      // Get tx receipt
+      const receipt = await this.web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async mintPAFSBT(user: user) {
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
-    // TODO : Inject data in contract
     // Encode the function call
     const encoded = contract.methods
       .attest(user.playFabId, user.created.valueOf().toString())
@@ -288,7 +373,6 @@ export class Web3Service {
       throw new NotFoundException("User has not minted PAFSBT token");
     }
 
-    // TODO : Inject data in contract
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
