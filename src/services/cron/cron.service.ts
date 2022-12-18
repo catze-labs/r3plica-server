@@ -57,12 +57,9 @@ export class CronService {
         },
       });
       if (txStatus) {
-        // tempvalue
-        const tokenId = "1";
-
         await this.prismaService.profileToken.create({
           data: {
-            tokenId,
+            tokenId: profileMint.tokenId,
             txHash: profileMint.txHash,
             txStatus,
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
