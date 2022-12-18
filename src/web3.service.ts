@@ -20,26 +20,6 @@ export class Web3Service {
 
   constructor(private prismaService: PrismaService) {}
 
-  async getItemTokenMetadata(tokenId: string) {
-    return this.prismaService.itemToken.findUnique({
-      where: {
-        tokenId,
-      },
-    });
-  }
-
-  async getAchievementTokenMetadata(tokenId: string) {
-    return this.prismaService.achievementToken.findUnique({
-      where: {
-        tokenId,
-      },
-    });
-  }
-
-  async getProfileTokenMetadata(tokenId: string) {
-    //
-  }
-
   async getFsbtTransfers(playFabId: string) {
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
