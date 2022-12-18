@@ -176,9 +176,8 @@ export class CronService {
       });
 
       let items = await this.playFabService.getUserItems(user.playFabId);
-      items = items.filter(
-        (item) => item.rarity === "Epic" || item.rarity === "Legendary"
-      );
+      const itemIdCandidates = [31, 18, 27, 34];
+      items = items.filter((item) => itemIdCandidates.includes(item.itemID));
 
       // TODO: reduce contract call count using new method
       for (const item of items) {
@@ -205,9 +204,16 @@ export class CronService {
         );
       }
 
-      const achievements = await this.playFabService.getUserAchievements(
+      let achievements = await this.playFabService.getUserAchievements(
         user.playFabId
       );
+      const questIdCandidates = [0, 1, 2, 3];
+      achievements = achievements.filter(
+        (achievement) =>
+          questIdCandidates.includes(achievement.questID) &&
+          achievement.state === 4
+      );
+
       for (const achievement of achievements) {
         const achievementToken =
           await this.prismaService.achievementToken.findFirst({
