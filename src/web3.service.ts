@@ -86,6 +86,8 @@ export class Web3Service {
       });
     }
 
+    const itemTxList = [];
+    const entitlementTxList = [];
     // Item
     const itemTokens: itemToken[] = await this.prismaService.itemToken.findMany(
       {
@@ -138,6 +140,11 @@ export class Web3Service {
             contractAddress: TESTNET_IAFSBT_PROXY_CONTRACT_ADDRESS,
             itemId: itemToken.itemId,
           },
+        });
+
+        itemTxList.push({
+          itemId: itemToken.itemId,
+          txHash: receipt.transactionHash,
         });
       } catch (err) {
         console.log(err);
@@ -196,10 +203,20 @@ export class Web3Service {
             entitlementId: entitlementToken.entitlementId,
           },
         });
+
+        entitlementTxList.push({
+          itemId: entitlementToken.entitlementId,
+          txHash: receipt.transactionHash,
+        });
       } catch (err) {
         console.log(err);
       }
     }
+
+    return {
+      itemTxList,
+      entitlementTxList,
+    };
   }
 
   async mintPAFSBT(user: user) {
