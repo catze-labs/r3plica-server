@@ -40,7 +40,7 @@ export class TransferController {
         sessionTicket
       );
 
-    return await this.web3Service.fsbtTransferToWallet(
+    return await this.web3Service.transferFsbtToWallet(
       userInfo.PlayFabId,
       itemIds,
       entitlementIds
@@ -57,6 +57,8 @@ export class TransferController {
         sessionTicket
       );
 
-    return await this.web3Service.profileFsbtToWallet(userInfo.PlayFabId);
+    return await this.web3Service.transferProfileFsbtToWallet(
+      userInfo.PlayFabId
+    );
   }
 }

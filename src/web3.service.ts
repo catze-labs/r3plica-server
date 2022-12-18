@@ -67,7 +67,7 @@ export class Web3Service {
     };
   }
 
-  async fsbtTransferToWallet(
+  async transferFsbtToWallet(
     playFabId: string,
     itemIds: number[],
     entitlementIds: number[]
@@ -360,7 +360,7 @@ export class Web3Service {
     }
   }
 
-  async profileFsbtToWallet(playFabId: string) {
+  async transferProfileFsbtToWallet(playFabId: string) {
     const user = await this.prismaService.user.findFirst({
       where: {
         playFabId,
