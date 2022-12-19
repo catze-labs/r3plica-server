@@ -1,7 +1,7 @@
 
 ![image](https://user-images.githubusercontent.com/75708535/208289892-0b6a7681-52a8-4252-822e-f32db95329d3.png)
 
-# r3plica Server Repository
+# r3plica-server
 
 ## Introduction
 
