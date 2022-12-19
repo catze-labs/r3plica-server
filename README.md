@@ -5,7 +5,7 @@
 
 ## Introduction
 
-`r3plica` is a project born from [`BNB Chain Innovation Hackathon 2022 - Seoul`](https://www.bnbchain.org/en/kr-hackathon), and this repository is the backend of `r3plica` project.
+`r3plica` is a project born from [`BNB Chain Innovation Hackathon 2022 - Seoul`](https://www.bnbchain.org/en/kr-hackathon), and this repository is the back-end of `r3plica` project.
 
 Our server implemented based on [`Nest`](https://github.com/nestjs/nest) & [`Prisma ORM`](https://www.prisma.io).  
 For interacting with blockchain, we use `web3.js` & `@ethersproject/wallet` library.
