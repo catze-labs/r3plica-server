@@ -109,12 +109,8 @@ export class Web3Service {
       profileIdsByItemIds.push(ethers.utils.formatBytes32String(playFabId));
     }
 
-    // Get the latest block
-    const block = await this.web3.eth.getBlock("latest");
-
-    // Create the transaction
+    // Create the transactions and estimate gas fee
     const setAchievementIdsAndProfileIdsTx = {
-      gas: Math.round(block.gasLimit / block.transactions.length),
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: contract.methods
         .setAchievementIdsAndProfileIds(
@@ -124,15 +120,24 @@ export class Web3Service {
         .encodeABI(),
     };
 
-    // Create the transaction
+    const achievementEstimatedGas = await this.web3.eth.estimateGas(
+      setAchievementIdsAndProfileIdsTx
+    );
+    setAchievementIdsAndProfileIdsTx["gas"] = achievementEstimatedGas;
+
     const setItemIdsAndProfileIdsTx = {
-      gas: Math.round(block.gasLimit / block.transactions.length),
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: contract.methods
         .setItemIdsAndProfileIds(itemTokenIds, profileIdsByItemIds)
         .encodeABI(),
     };
 
+    const itemEstimatedGas = await this.web3.eth.estimateGas(
+      setItemIdsAndProfileIdsTx
+    );
+    setItemIdsAndProfileIdsTx["gas"] = itemEstimatedGas;
+
+    // sign and send Tx
     let setAchievementIdsAndProfileIdsTxHash;
     let setItemIdsAndProfileIdsTxHash;
     try {
@@ -203,8 +208,8 @@ export class Web3Service {
     }
 
     return {
-      txHash1: setAchievementIdsAndProfileIdsTxHash,
-      txHash2: setItemIdsAndProfileIdsTxHash,
+      achievementTxHash: setAchievementIdsAndProfileIdsTxHash,
+      itemTxHash: setItemIdsAndProfileIdsTxHash,
     };
   }
 
@@ -221,16 +226,14 @@ export class Web3Service {
       .setItemIdsAndProfileIds(itemTokenIds, profileTokenIds)
       .encodeABI();
 
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
     // Create the transaction
     const tx = {
-      gas: gasLimit,
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
+
+    const gas = await this.web3.eth.estimateGas(tx);
+    tx["gas"] = gas;
 
     try {
       // Sign the transaction
@@ -258,16 +261,16 @@ export class Web3Service {
       .setAchievementIdsAndProfileIds(achievementTokenIds, profileTokenIds)
       .encodeABI();
 
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
-    // Create the transaction
     const tx = {
-      gas: gasLimit,
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
+
+    // get estimated gas
+    const gas = await this.web3.eth.estimateGas(tx);
+    tx["gas"] = gas;
+
+    // Create the transaction
 
     try {
       // Sign the transaction
@@ -308,16 +311,15 @@ export class Web3Service {
       )
       .encodeABI();
 
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
     // Create the transaction
     const tx = {
-      gas: gasLimit,
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
+
+    // get estimated gas
+    const gas = await this.web3.eth.estimateGas(tx);
+    tx["gas"] = gas;
 
     try {
       // Sign the transaction
@@ -382,16 +384,15 @@ export class Web3Service {
       .limitedTransfer(deployAddress, user.walletAddress, profileToken.tokenId)
       .encodeABI();
 
-    // Get the gas limit
-    const block = await this.web3.eth.getBlock("latest");
-    const gasLimit = Math.round(block.gasLimit / block.transactions.length);
-
     // Create the transaction
     const tx = {
-      gas: gasLimit,
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
+
+    // get estimated gas
+    const gas = await this.web3.eth.estimateGas(tx);
+    tx["gas"] = gas;
 
     try {
       // Sign the transaction

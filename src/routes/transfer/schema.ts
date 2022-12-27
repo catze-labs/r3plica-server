@@ -44,7 +44,10 @@ export const postTransferResponse = {
   schema: {
     type: "object",
     properties: {
-      txHash: {
+      itemTxHash: {
+        type: "string",
+      },
+      achievementTxHash: {
         type: "string",
       },
     },
