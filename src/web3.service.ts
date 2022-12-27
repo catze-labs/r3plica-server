@@ -313,11 +313,10 @@ export class Web3Service {
 
     // Create the transaction
     const tx = {
+      from: address,
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
-
-    // get estimated gas
     const gas = await this.web3.eth.estimateGas(tx);
     tx["gas"] = gas;
 
