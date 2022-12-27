@@ -120,10 +120,9 @@ export class Web3Service {
         .encodeABI(),
     };
 
-    const achievementEstimatedGas = await this.web3.eth.estimateGas(
+    setAchievementIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
       setAchievementIdsAndProfileIdsTx
     );
-    setAchievementIdsAndProfileIdsTx["gas"] = achievementEstimatedGas;
 
     const setItemIdsAndProfileIdsTx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -132,10 +131,9 @@ export class Web3Service {
         .encodeABI(),
     };
 
-    const itemEstimatedGas = await this.web3.eth.estimateGas(
+    setItemIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
       setItemIdsAndProfileIdsTx
     );
-    setItemIdsAndProfileIdsTx["gas"] = itemEstimatedGas;
 
     // sign and send Tx
     let setAchievementIdsAndProfileIdsTxHash;
@@ -232,8 +230,7 @@ export class Web3Service {
       data: encoded,
     };
 
-    const gas = await this.web3.eth.estimateGas(tx);
-    tx["gas"] = gas;
+    tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     try {
       // Sign the transaction
@@ -267,8 +264,7 @@ export class Web3Service {
     };
 
     // get estimated gas
-    const gas = await this.web3.eth.estimateGas(tx);
-    tx["gas"] = gas;
+    tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     // Create the transaction
 
@@ -317,8 +313,7 @@ export class Web3Service {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
     };
-    const gas = await this.web3.eth.estimateGas(tx);
-    tx["gas"] = gas;
+    tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     try {
       // Sign the transaction
@@ -390,8 +385,7 @@ export class Web3Service {
     };
 
     // get estimated gas
-    const gas = await this.web3.eth.estimateGas(tx);
-    tx["gas"] = gas;
+    tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     try {
       // Sign the transaction
