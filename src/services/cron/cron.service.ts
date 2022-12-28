@@ -89,47 +89,57 @@ export class CronService {
     }
 
     // Update item transfer tx status
-    // const itemTransfers = await this.prismaService.itemTransfer.findMany({
-    //   where: {
-    //     txStatus: null,
-    //   },
-    // });
+    const itemTransfers = await this.prismaService.itemTransfer.findMany({
+      where: {
+        txStatus: null,
+      },
+    });
 
-    // for (const itemTransfer of itemTransfers) {
-    //   const parsedData = await this.getTransactionStatus(itemTransfer.txHash);
+    for (const itemTransfer of itemTransfers) {
+      const txStatus: boolean | null = await this.getTransactionStatus(
+        itemTransfer.txHash
+      );
 
-    //   await this.prismaService.itemTransfer.update({
-    //     where: {
-    //       id: itemTransfer.id,
-    //     },
-    //     data: {
-    //       txStatus: parsedData["status"] == "1",
-    //     },
-    //   });
-    // }
+      if (txStatus === null) {
+        continue;
+      }
+
+      await this.prismaService.itemTransfer.update({
+        where: {
+          id: itemTransfer.id,
+        },
+        data: {
+          txStatus,
+        },
+      });
+    }
 
     // // Update achievement transfer tx status
-    // const achievementTransfers =
-    //   await this.prismaService.achievementTransfer.findMany({
-    //     where: {
-    //       txStatus: null,
-    //     },
-    //   });
+    const achievementTransfers =
+      await this.prismaService.achievementTransfer.findMany({
+        where: {
+          txStatus: null,
+        },
+      });
 
-    // for (const achievementTransfer of achievementTransfers) {
-    //   const parsedData = await this.getTransactionStatus(
-    //     achievementTransfer.txHash
-    //   );
+    for (const achievementTransfer of achievementTransfers) {
+      const txStatus: boolean | null = await this.getTransactionStatus(
+        achievementTransfer.txHash
+      );
 
-    //   await this.prismaService.itemTransfer.update({
-    //     where: {
-    //       id: achievementTransfer.id,
-    //     },
-    //     data: {
-    //       txStatus: parsedData["status"] == "1",
-    //     },
-    //   });
-    // }
+      if (txStatus === null) {
+        continue;
+      }
+
+      await this.prismaService.itemTransfer.update({
+        where: {
+          id: achievementTransfer.id,
+        },
+        data: {
+          txStatus,
+        },
+      });
+    }
   }
 
   // @Cron("*/2 * * * *")
