@@ -11,7 +11,7 @@ import { ethers } from "ethers";
 @Injectable()
 export class Web3Service {
   private provider = new Web3.providers.HttpProvider(
-    process.env.BSC_TEST_PROVIDER
+    process.env.APOTHEM_PROVIDER
   );
   private web3 = new Web3(this.provider);
 
@@ -316,30 +316,31 @@ export class Web3Service {
     tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     try {
-      // Sign the transaction
+      //Sign the transaction
       const signedTx = await this.web3.eth.accounts.signTransaction(
         tx,
         process.env.PRIVATE_KEY
       );
 
-      const receipt = await this.web3.eth.sendSignedTransaction(
+      let receipt = await this.web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
+
       const tokenId = await this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
           playFabId: user.playFabId,
           tokenId,
-          txHash: receipt.transactionHash,
+          txHash: signedTx.transactionHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
         },
       });
 
       Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
 
-      return receipt.transactionHash;
+      return receipt["transactionHash"];
     } catch (err) {
-      console.log(err);
+      console.log("error", err);
     }
   }
 
@@ -421,7 +422,7 @@ export class Web3Service {
     );
 
     const result = await contract.methods
-      .getProfileId(ethers.utils.formatBytes32String(playFabId))
+      .getProfileIdByPlayfabId(ethers.utils.formatBytes32String(playFabId))
       .call();
 
     if (Array.isArray(result)) {
@@ -429,5 +430,9 @@ export class Web3Service {
     }
 
     return "0";
+  }
+
+  async getGasPrice() {
+    return await this.web3.eth.getGasPrice();
   }
 }

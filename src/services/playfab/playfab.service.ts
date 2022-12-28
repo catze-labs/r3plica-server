@@ -106,12 +106,21 @@ export class PlayFabService {
 
     const parsedData = axiosReturnOrThrow(response);
 
+    const playFabId: string = parsedData["PlayFabId"];
     const user: user = await this.prismaService.user.create({
       data: {
-        playFabId: parsedData["PlayFabId"],
+        playFabId,
         email: email,
       },
     });
+
+    try {
+      const txHash = await this.web3Service.mintPAFSBT(playFabId);
+      parsedData["txHash"] = txHash;
+    } catch (err) {
+      console.log("Error", err);
+      return parsedData;
+    }
 
     return parsedData;
   }

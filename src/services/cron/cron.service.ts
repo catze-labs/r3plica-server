@@ -78,50 +78,50 @@ export class CronService {
     }
 
     // Update item transfer tx status
-    const itemTransfers = await this.prismaService.itemTransfer.findMany({
-      where: {
-        txStatus: null,
-      },
-    });
+    // const itemTransfers = await this.prismaService.itemTransfer.findMany({
+    //   where: {
+    //     txStatus: null,
+    //   },
+    // });
 
-    for (const itemTransfer of itemTransfers) {
-      const parsedData = await this.getTransactionStatus(itemTransfer.txHash);
+    // for (const itemTransfer of itemTransfers) {
+    //   const parsedData = await this.getTransactionStatus(itemTransfer.txHash);
 
-      await this.prismaService.itemTransfer.update({
-        where: {
-          id: itemTransfer.id,
-        },
-        data: {
-          txStatus: parsedData["status"] == "1",
-        },
-      });
-    }
+    //   await this.prismaService.itemTransfer.update({
+    //     where: {
+    //       id: itemTransfer.id,
+    //     },
+    //     data: {
+    //       txStatus: parsedData["status"] == "1",
+    //     },
+    //   });
+    // }
 
-    // Update achievement transfer tx status
-    const achievementTransfers =
-      await this.prismaService.achievementTransfer.findMany({
-        where: {
-          txStatus: null,
-        },
-      });
+    // // Update achievement transfer tx status
+    // const achievementTransfers =
+    //   await this.prismaService.achievementTransfer.findMany({
+    //     where: {
+    //       txStatus: null,
+    //     },
+    //   });
 
-    for (const achievementTransfer of achievementTransfers) {
-      const parsedData = await this.getTransactionStatus(
-        achievementTransfer.txHash
-      );
+    // for (const achievementTransfer of achievementTransfers) {
+    //   const parsedData = await this.getTransactionStatus(
+    //     achievementTransfer.txHash
+    //   );
 
-      await this.prismaService.itemTransfer.update({
-        where: {
-          id: achievementTransfer.id,
-        },
-        data: {
-          txStatus: parsedData["status"] == "1",
-        },
-      });
-    }
+    //   await this.prismaService.itemTransfer.update({
+    //     where: {
+    //       id: achievementTransfer.id,
+    //     },
+    //     data: {
+    //       txStatus: parsedData["status"] == "1",
+    //     },
+    //   });
+    // }
   }
 
-  @Cron("*/2 * * * *")
+  // @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     this.logger.log("updateUserItemAndAchievement");
     const users = await this.prismaService.user.findMany({});
@@ -228,20 +228,20 @@ export class CronService {
     });
 
     users = users.filter((user) => !user.profileToken);
-    for (const user of users) {
-      const profileMint = await this.prismaService.profileMint.findFirst({
-        where: {
-          playFabId: user.playFabId,
-          txStatus: {
-            not: false,
-          },
-        },
-      });
-      if (profileMint != null) {
-        continue;
-      }
-      await this.web3Service.mintPAFSBT(user.playFabId);
-    }
+    // for (const user of users) {
+    //   const profileMint = await this.prismaService.profileMint.findFirst({
+    //     where: {
+    //       playFabId: user.playFabId,
+    //       txStatus: {
+    //         not: false,
+    //       },
+    //     },
+    //   });
+    //   if (profileMint != null) {
+    //     continue;
+    //   }
+    //   // await this.web3Service.mintPAFSBT(user.playFabId);
+    // }
   }
 
   private async getTransactionStatus(txHash: string) {
