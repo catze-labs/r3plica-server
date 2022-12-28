@@ -414,9 +414,9 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`mint PAFSBT tx is sent for user ${user.playFabId}`);
+      Logger.debug(`PAFSBT is sent for user ${user.playFabId}`);
 
-      return { txHash: receipt.transactionHash };
+      return { txHash: receipt["transactionHash"] };
     } catch (err) {
       console.log(err);
     }
