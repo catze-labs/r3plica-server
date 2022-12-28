@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
@@ -7,6 +12,8 @@ import {
 } from "./constants";
 import { PrismaService } from "./prisma.service";
 import { ethers } from "ethers";
+import axios from "axios";
+import { axiosReturnOrThrow } from "./utils";
 
 @Injectable()
 export class Web3Service {
@@ -432,7 +439,16 @@ export class Web3Service {
     return "0";
   }
 
-  async getGasPrice() {
-    return await this.web3.eth.getGasPrice();
+  async getTransactionStatus(txHash: string) {
+    const url = `https://apothem.blocksscan.io/api/txs/${txHash}`;
+
+    let response: any;
+    try {
+      response = await axios.get(url);
+      return response.data.status;
+    } catch (error) {
+      // const status = error.response.status;
+      return null;
+    }
   }
 }

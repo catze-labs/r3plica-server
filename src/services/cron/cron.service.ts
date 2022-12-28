@@ -31,8 +31,14 @@ export class CronService {
       });
 
     for (const profileMint of profileMints) {
-      const parsedData = await this.getTransactionStatus(profileMint.txHash);
-      const txStatus = parsedData["status"] == "1";
+      const txStatus: boolean | null = await this.getTransactionStatus(
+        profileMint.txHash
+      );
+
+      if (txStatus === null) {
+        continue;
+      }
+
       await this.prismaService.profileMint.update({
         where: {
           id: profileMint.id,
@@ -41,6 +47,7 @@ export class CronService {
           txStatus,
         },
       });
+
       if (txStatus) {
         const tokenId = await this.web3Service.getProfileTokenId(
           profileMint.playFabId
@@ -63,16 +70,20 @@ export class CronService {
     });
 
     for (const profileTransfer of profileTransfers) {
-      const parsedData = await this.getTransactionStatus(
+      const txStatus: boolean | null = await this.getTransactionStatus(
         profileTransfer.txHash
       );
+
+      if (txStatus === null) {
+        continue;
+      }
 
       await this.prismaService.profileTransfer.update({
         where: {
           id: profileTransfer.id,
         },
         data: {
-          txStatus: parsedData["status"] == "1",
+          txStatus,
         },
       });
     }
@@ -244,18 +255,16 @@ export class CronService {
     // }
   }
 
-  private async getTransactionStatus(txHash: string) {
-    const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
+  async getTransactionStatus(txHash: string) {
+    const url = `https://apothem.blocksscan.io/api/txs/${txHash}`;
 
     let response: any;
     try {
-      const { data } = await axios.get(url);
-
-      response = data;
+      response = await axios.get(url);
+      return response.data.status;
     } catch (error) {
-      response = error.response;
+      // const status = error.response.status;
+      return null;
     }
-
-    return axiosReturnOrThrow(response);
   }
 }
