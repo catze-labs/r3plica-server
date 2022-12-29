@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { user } from "@prisma/client";
 import Web3 from "web3";
 import {
@@ -13,8 +8,6 @@ import {
 import { PrismaService } from "./prisma.service";
 import { ethers } from "ethers";
 import axios from "axios";
-import { axiosReturnOrThrow } from "./utils";
-
 @Injectable()
 export class Web3Service {
   private provider = new Web3.providers.HttpProvider(

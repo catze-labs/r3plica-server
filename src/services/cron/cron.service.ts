@@ -4,7 +4,6 @@ import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import { TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
 import axios from "axios";
-import { axiosReturnOrThrow } from "../../utils";
 import { Web3Service } from "src/web3.service";
 import { profileMint } from "@prisma/client";
 
