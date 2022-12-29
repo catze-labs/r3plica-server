@@ -237,6 +237,17 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
+    const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
+
+    const nonce = await this.web3.eth.getTransactionCount(
+      deployAddress,
+      "latest"
+    );
+    const gas = Number(await this.web3.eth.getGasPrice());
+    const gasLimit = 6000000;
+
     const encoded = contract.methods
       .setItemIdsAndProfileIds(itemTokenIds, profileTokenIds)
       .encodeABI();
@@ -245,9 +256,10 @@ export class Web3Service {
     const tx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
+      nonce: nonce + 1,
+      gas: gas * 2 + "",
+      gasLimit: gasLimit,
     };
-
-    tx["gas"] = await this.web3.eth.estimateGas(tx);
 
     try {
       // Sign the transaction
@@ -271,6 +283,17 @@ export class Web3Service {
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
     );
 
+    const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
+
+    const nonce = await this.web3.eth.getTransactionCount(
+      deployAddress,
+      "latest"
+    );
+    const gas = Number(await this.web3.eth.getGasPrice());
+    const gasLimit = 6000000;
+
     const encoded = contract.methods
       .setAchievementIdsAndProfileIds(achievementTokenIds, profileTokenIds)
       .encodeABI();
@@ -278,12 +301,10 @@ export class Web3Service {
     const tx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: encoded,
+      nonce: nonce + 2,
+      gas: gas * 2 + "",
+      gasLimit: gasLimit,
     };
-
-    // get estimated gas
-    tx["gas"] = await this.web3.eth.estimateGas(tx);
-
-    // Create the transaction
 
     try {
       // Sign the transaction
