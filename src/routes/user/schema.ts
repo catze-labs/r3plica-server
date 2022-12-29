@@ -15,14 +15,10 @@ export const getUserResponse = {
   },
 };
 
-const linkWalletResponse = {
-  test: { type: "string" },
-};
-
 export const linkWalletApiResponse = {
   status: 200,
   description: "Link wallet to user",
   schema: {
-    properties: linkWalletResponse,
+    properties: user,
   },
 };
