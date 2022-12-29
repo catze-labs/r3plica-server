@@ -113,6 +113,13 @@ export class Web3Service {
       profileIdsByItemIds.push(ethers.utils.formatBytes32String(playFabId));
     }
 
+    const nonce = await this.web3.eth.getTransactionCount(
+      deployAddress,
+      "latest"
+    );
+    const gas = Number(await this.web3.eth.getGasPrice());
+    const gasLimit = 6000000;
+
     // Create the transactions and estimate gas fee
     const setAchievementIdsAndProfileIdsTx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -122,6 +129,9 @@ export class Web3Service {
           profileIdsByAchievementIds
         )
         .encodeABI(),
+      nonce,
+      gas: gas * 2 + "",
+      gasLimit,
     };
 
     const setItemIdsAndProfileIdsTx = {
@@ -129,23 +139,10 @@ export class Web3Service {
       data: contract.methods
         .setItemIdsAndProfileIds(itemTokenIds, profileIdsByItemIds)
         .encodeABI(),
+      nonce: nonce + 1,
+      gas: gas * 2 + "",
+      gasLimit,
     };
-
-    const nonce = await this.web3.eth.getTransactionCount(
-      deployAddress,
-      "latest"
-    );
-    const gas = Number(await this.web3.eth.getGasPrice());
-    const gasLimit = 6000000;
-
-    setAchievementIdsAndProfileIdsTx["nonce"] = nonce;
-    setItemIdsAndProfileIdsTx["nonce"] = nonce + 1;
-
-    setAchievementIdsAndProfileIdsTx["gas"] = gas * 2 + "";
-    setItemIdsAndProfileIdsTx["gas"] = gas * 2 + "";
-
-    setAchievementIdsAndProfileIdsTx["gasLimit"] = gasLimit;
-    setItemIdsAndProfileIdsTx["gasLimit"] = gasLimit;
 
     // sign and send Tx
     let setAchievementIdsAndProfileIdsTxHash;
@@ -180,9 +177,6 @@ export class Web3Service {
         ),
       ]);
 
-      console.log(setAchievementIdsAndProfileIdsTxReceipt);
-      console.log(setItemIdsAndProfileIdsTxReceipt);
-
       setAchievementIdsAndProfileIdsTxHash =
         setAchievementIdsAndProfileIdsTxReceipt.transactionHash;
       setItemIdsAndProfileIdsTxHash =
@@ -190,6 +184,7 @@ export class Web3Service {
 
       let achievementTransferCreateData = [];
       let itemTransferCreateData = [];
+
       for (const achievementToken of achievementTokens) {
         achievementTransferCreateData.push({
           playFabId: playFabId,
@@ -198,6 +193,7 @@ export class Web3Service {
           achievementId: achievementToken.achievementId,
         });
       }
+
       for (const itemToken of itemTokens) {
         itemTransferCreateData.push({
           playFabId: playFabId,
