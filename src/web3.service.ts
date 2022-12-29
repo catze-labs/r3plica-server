@@ -70,6 +70,10 @@ export class Web3Service {
       });
     }
 
+    const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
+
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -120,10 +124,6 @@ export class Web3Service {
         .encodeABI(),
     };
 
-    setAchievementIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
-      setAchievementIdsAndProfileIdsTx
-    );
-
     const setItemIdsAndProfileIdsTx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: contract.methods
@@ -131,13 +131,26 @@ export class Web3Service {
         .encodeABI(),
     };
 
-    setItemIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
-      setItemIdsAndProfileIdsTx
+    const nonce = await this.web3.eth.getTransactionCount(
+      deployAddress,
+      "latest"
     );
+    const gas = Number(await this.web3.eth.getGasPrice());
+    const gasLimit = 6000000;
+
+    setAchievementIdsAndProfileIdsTx["nonce"] = nonce;
+    setItemIdsAndProfileIdsTx["nonce"] = nonce + 1;
+
+    setAchievementIdsAndProfileIdsTx["gas"] = gas * 2 + "";
+    setItemIdsAndProfileIdsTx["gas"] = gas * 2 + "";
+
+    setAchievementIdsAndProfileIdsTx["gasLimit"] = gasLimit;
+    setItemIdsAndProfileIdsTx["gasLimit"] = gasLimit;
 
     // sign and send Tx
     let setAchievementIdsAndProfileIdsTxHash;
     let setItemIdsAndProfileIdsTxHash;
+
     try {
       // Sign the transaction
       const [
@@ -166,6 +179,9 @@ export class Web3Service {
           signedSetItemIdsAndProfileIdsTx.rawTransaction
         ),
       ]);
+
+      console.log(setAchievementIdsAndProfileIdsTxReceipt);
+      console.log(setItemIdsAndProfileIdsTxReceipt);
 
       setAchievementIdsAndProfileIdsTxHash =
         setAchievementIdsAndProfileIdsTxReceipt.transactionHash;
@@ -202,12 +218,13 @@ export class Web3Service {
         }),
       ]);
     } catch (err) {
+      console.log("error");
       console.log(err);
     }
 
     return {
-      achievementTxHash: setAchievementIdsAndProfileIdsTxHash,
-      itemTxHash: setItemIdsAndProfileIdsTxHash,
+      achievementTxHash: setAchievementIdsAndProfileIdsTxHash || null,
+      itemTxHash: setItemIdsAndProfileIdsTxHash || null,
     };
   }
 
