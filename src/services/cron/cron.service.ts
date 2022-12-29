@@ -17,7 +17,7 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  @Cron("*/3 * * * *")
+  @Cron("*/1 * * * *")
   async updateTransactionStatus() {
     this.logger.log("updateTransactionStatus");
 
@@ -243,7 +243,7 @@ export class CronService {
     }
   }
 
-  @Cron("*/1 * * * *")
+  @Cron("*/3 * * * *")
   async mintProfileTokenForced() {
     this.logger.log("mintProfileTokenForced");
     let users = await this.prismaService.user.findMany({
@@ -253,20 +253,27 @@ export class CronService {
     });
 
     users = users.filter((user) => !user.profileToken);
-    // for (const user of users) {
-    //   const profileMint = await this.prismaService.profileMint.findFirst({
-    //     where: {
-    //       playFabId: user.playFabId,
-    //       txStatus: {
-    //         not: false,
-    //       },
-    //     },
-    //   });
-    //   if (profileMint != null) {
-    //     continue;
-    //   }
-    //   // await this.web3Service.mintPAFSBT(user.playFabId);
-    // }
+    for (const user of users) {
+      const profileMint = await this.prismaService.profileMint.findFirst({
+        where: {
+          playFabId: user.playFabId,
+          OR: [
+            {
+              txStatus: null,
+            },
+            {
+              txStatus: true,
+            },
+          ],
+        },
+      });
+
+      if (profileMint != null) {
+        continue;
+      }
+
+      await this.web3Service.mintPAFSBT(user.playFabId);
+    }
   }
 
   async getTransactionStatus(txHash: string) {

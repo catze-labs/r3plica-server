@@ -370,7 +370,9 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+      Logger.debug(
+        `PAFSBT mint request Tx sended - User ${user.playFabId} : Tx ${receipt["transactionHash"]}`
+      );
 
       return receipt["transactionHash"];
     } catch (err) {
