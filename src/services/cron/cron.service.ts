@@ -155,86 +155,91 @@ export class CronService {
 
       // Mapping Items
       let items = await this.playFabService.getUserItems(user.playFabId);
-      const itemIdCandidates = [31, 18, 27, 34];
 
-      items = items.filter((item) => itemIdCandidates.includes(item.itemID));
+      if (items.length > 0) {
+        const itemIdCandidates = [31, 18, 27, 34];
 
-      let itemTokenIds = [];
-      let profileTokenIdsByItemTokenIds = [];
+        items = items.filter((item) => itemIdCandidates.includes(item.itemID));
 
-      for (const item of items) {
-        const itemToken = await this.prismaService.itemToken.findFirst({
-          where: {
-            contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-            itemId: item.itemID,
-            playFabId: null,
-          },
-        });
+        let itemTokenIds = [];
+        let profileTokenIdsByItemTokenIds = [];
 
-        if (!itemToken) continue;
+        for (const item of items) {
+          const itemToken = await this.prismaService.itemToken.findFirst({
+            where: {
+              contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+              itemId: item.itemID,
+              playFabId: null,
+            },
+          });
 
-        itemTokenIds.push(itemToken.tokenId);
-        profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
+          if (!itemToken) continue;
 
-        await this.prismaService.itemToken.update({
-          where: {
-            tokenId: itemToken.tokenId,
-          },
-          data: {
-            playFabId: user.playFabId,
-          },
-        });
+          itemTokenIds.push(itemToken.tokenId);
+          profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
+
+          await this.prismaService.itemToken.update({
+            where: {
+              tokenId: itemToken.tokenId,
+            },
+            data: {
+              playFabId: user.playFabId,
+            },
+          });
+        }
+
+        await this.web3Service.bindItemIdsToProfileIds(
+          itemTokenIds,
+          profileTokenIdsByItemTokenIds
+        );
       }
-
-      await this.web3Service.bindItemIdsToProfileIds(
-        itemTokenIds,
-        profileTokenIdsByItemTokenIds
-      );
 
       // Mapping Achievements
       let achievements = await this.playFabService.getUserAchievements(
         user.playFabId
       );
-      const questIdCandidates = [0, 1, 2, 3];
 
-      achievements = achievements.filter(
-        (achievement) =>
-          questIdCandidates.includes(achievement.questID) &&
-          achievement.state === 4
-      );
+      if (achievements.length > 0) {
+        const questIdCandidates = [0, 1, 2, 3];
 
-      let achievementTokenIds = [];
-      let profileTokenIdsByAchievementTokenIds = [];
+        achievements = achievements.filter(
+          (achievement) =>
+            questIdCandidates.includes(achievement.questID) &&
+            achievement.state === 4
+        );
 
-      for (const achievement of achievements) {
-        const achievementToken =
-          await this.prismaService.achievementToken.findFirst({
+        let achievementTokenIds = [];
+        let profileTokenIdsByAchievementTokenIds = [];
+        for (const achievement of achievements) {
+          const achievementToken =
+            await this.prismaService.achievementToken.findFirst({
+              where: {
+                contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+                achievementId: achievement.questID,
+                playFabId: null,
+              },
+            });
+
+          if (!achievementToken) continue;
+
+          achievementTokenIds.push(achievementToken.tokenId);
+          profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
+
+          await this.prismaService.achievementToken.update({
             where: {
-              contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-              achievementId: achievement.questID,
-              playFabId: null,
+              tokenId: achievementToken.tokenId,
+            },
+            data: {
+              playFabId: user.playFabId,
             },
           });
+        }
 
-        if (!achievementToken) continue;
-
-        achievementTokenIds.push(achievementToken.tokenId);
-        profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
-
-        await this.prismaService.achievementToken.update({
-          where: {
-            tokenId: achievementToken.tokenId,
-          },
-          data: {
-            playFabId: user.playFabId,
-          },
-        });
+        await this.web3Service.bindAchievementIdsToProfileIds(
+          achievementTokenIds.map(String),
+          profileTokenIdsByAchievementTokenIds.map(String)
+        );
       }
-
-      await this.web3Service.bindAchievementIdsToProfileIds(
-        achievementTokenIds.map(String),
-        profileTokenIdsByAchievementTokenIds.map(String)
-      );
     }
   }
 
