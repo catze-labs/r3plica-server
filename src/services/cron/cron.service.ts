@@ -117,15 +117,19 @@ export class CronService {
         },
       });
 
+    console.log(achievementTransfers);
+
     for (const achievementTransfer of achievementTransfers) {
       const txStatus: boolean | null =
         await this.web3Service.getTransactionStatus(achievementTransfer.txHash);
+
+      console.log(txStatus);
 
       if (txStatus === null) {
         continue;
       }
 
-      await this.prismaService.itemTransfer.update({
+      await this.prismaService.achievementTransfer.update({
         where: {
           id: achievementTransfer.id,
         },
