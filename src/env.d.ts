@@ -15,6 +15,5 @@ declare namespace NodeJS {
     BSCAN_API_KEY: string;
 
     APOTHEM_PROVIDER: string;
-    APOTHEM_API_KEY: string;
   }
 }
