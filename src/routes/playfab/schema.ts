@@ -96,6 +96,7 @@ const item = {
   enchantmentID: { type: "number" },
   enchantmentTierIndex: { type: "number" },
   sockets: { type: "array" },
+  isTokenized: { type: "boolean" },
   isTransferred: { type: "boolean" },
   transfer: { type: "object", properties: itemTransfer, nullable: true },
 };
@@ -106,6 +107,7 @@ const achievement = {
   description: { type: "string" },
   state: { type: "number", enum: [0, 1, 2, 3, 4] },
   objectives: { type: "array", items: { type: "object" } },
+  isTokenized: { type: "boolean" },
   isTransferred: { type: "boolean" },
   transfer: { type: "object", properties: achievementTransfer, nullable: true },
 };
