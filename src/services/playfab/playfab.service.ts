@@ -197,6 +197,13 @@ export class PlayFabService {
     let userItems: UserItem[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
+    // Is item token mapped to user
+    const itemTokens = await this.prismaService.itemToken.findMany({
+      where: {
+        playFabId,
+      },
+    });
+
     // Transfer history
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
@@ -214,6 +221,7 @@ export class PlayFabService {
         ...userItem,
         isTransferred: false,
         transfer: null,
+        isTokenized: false,
       };
 
       // Compare transferred item to user already have item
@@ -223,6 +231,15 @@ export class PlayFabService {
           wrappedItem.transfer = itemTransfer;
         }
       }
+
+      // Compare item token to user already have
+      for (const itemToken of itemTokens) {
+        if (itemToken.itemId === userItem.itemID) {
+          wrappedItem.isTokenized = true;
+        }
+      }
+
+      console.log(wrappedItem);
 
       return wrappedItem;
     });
