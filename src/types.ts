@@ -36,6 +36,7 @@ export interface UserItemWrapper extends UserItem {
 }
 
 export interface UserAchievementWrapper extends UserAchievement {
+  isTokenized: boolean;
   isTransferred: boolean;
   transfer?: achievementTransfer;
 }

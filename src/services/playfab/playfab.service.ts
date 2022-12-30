@@ -239,8 +239,6 @@ export class PlayFabService {
         }
       }
 
-      console.log(wrappedItem);
-
       return wrappedItem;
     });
   }
@@ -276,6 +274,14 @@ export class PlayFabService {
 
     userAchievements.filter((achievement) => achievement.state === 4);
 
+    // Tokenized history
+    const achievementTokens =
+      await this.prismaService.achievementToken.findMany({
+        where: {
+          playFabId,
+        },
+      });
+
     // Transfer history
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
@@ -289,6 +295,7 @@ export class PlayFabService {
         ...userAchievement,
         isTransferred: false,
         transfer: null,
+        isTokenized: false,
       };
 
       for (const achievementTransfer of achievementTransfers) {
@@ -298,6 +305,12 @@ export class PlayFabService {
         ) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = achievementTransfer;
+        }
+      }
+
+      for (const achievementToken of achievementTokens) {
+        if (achievementToken.achievementId === userAchievement.questID) {
+          wrappedItem.isTokenized = true;
         }
       }
 
