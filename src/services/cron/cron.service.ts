@@ -3,7 +3,6 @@ import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "src/prisma.service";
 import { PlayFabService } from "../playfab/playfab.service";
 import { TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
-import axios from "axios";
 import { Web3Service } from "src/web3.service";
 import { profileMint } from "@prisma/client";
 
@@ -30,9 +29,8 @@ export class CronService {
       });
 
     for (const profileMint of profileMints) {
-      const txStatus: boolean | null = await this.getTransactionStatus(
-        profileMint.txHash
-      );
+      const txStatus: boolean | null =
+        await this.web3Service.getTransactionStatus(profileMint.txHash);
 
       if (txStatus === null) {
         continue;
@@ -69,9 +67,8 @@ export class CronService {
     });
 
     for (const profileTransfer of profileTransfers) {
-      const txStatus: boolean | null = await this.getTransactionStatus(
-        profileTransfer.txHash
-      );
+      const txStatus: boolean | null =
+        await this.web3Service.getTransactionStatus(profileTransfer.txHash);
 
       if (txStatus === null) {
         continue;
@@ -95,9 +92,8 @@ export class CronService {
     });
 
     for (const itemTransfer of itemTransfers) {
-      const txStatus: boolean | null = await this.getTransactionStatus(
-        itemTransfer.txHash
-      );
+      const txStatus: boolean | null =
+        await this.web3Service.getTransactionStatus(itemTransfer.txHash);
 
       if (txStatus === null) {
         continue;
@@ -122,9 +118,8 @@ export class CronService {
       });
 
     for (const achievementTransfer of achievementTransfers) {
-      const txStatus: boolean | null = await this.getTransactionStatus(
-        achievementTransfer.txHash
-      );
+      const txStatus: boolean | null =
+        await this.web3Service.getTransactionStatus(achievementTransfer.txHash);
 
       if (txStatus === null) {
         continue;
@@ -263,19 +258,6 @@ export class CronService {
       }
 
       await this.web3Service.mintPAFSBT(user.playFabId);
-    }
-  }
-
-  async getTransactionStatus(txHash: string) {
-    const url = `https://apothem.blocksscan.io/api/txs/${txHash}`;
-
-    let response: any;
-    try {
-      response = await axios.get(url);
-      return response.data.status;
-    } catch (error) {
-      // const status = error.response.status;
-      return null;
     }
   }
 }

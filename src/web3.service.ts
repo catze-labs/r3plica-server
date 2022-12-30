@@ -8,6 +8,7 @@ import {
 import { PrismaService } from "./prisma.service";
 import { ethers } from "ethers";
 import axios from "axios";
+
 @Injectable()
 export class Web3Service {
   private provider = new Web3.providers.HttpProvider(
