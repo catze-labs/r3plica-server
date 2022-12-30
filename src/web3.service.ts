@@ -177,6 +177,18 @@ export class Web3Service {
         ),
       ]);
 
+      console.log(itemTokenIds);
+      console.log(achievementTokenIds);
+
+      console.log(
+        "setItemIdsAndProfileIdsTxReceipt",
+        setItemIdsAndProfileIdsTxReceipt
+      );
+      console.log(
+        "setAchievementIdsAndProfileIdsTxReceipt",
+        setAchievementIdsAndProfileIdsTxReceipt
+      );
+
       setAchievementIdsAndProfileIdsTxHash =
         setAchievementIdsAndProfileIdsTxReceipt.transactionHash;
       setItemIdsAndProfileIdsTxHash =
@@ -191,6 +203,7 @@ export class Web3Service {
           txHash: setAchievementIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
           achievementId: achievementToken.achievementId,
+          tokenId: achievementToken.tokenId,
         });
       }
 
@@ -200,6 +213,7 @@ export class Web3Service {
           txHash: setItemIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
           itemId: itemToken.itemId,
+          tokenId: itemToken.tokenId,
         });
       }
 

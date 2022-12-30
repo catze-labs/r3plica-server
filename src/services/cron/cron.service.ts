@@ -141,7 +141,7 @@ export class CronService {
     }
   }
 
-  // @Cron("*/2 * * * *")
+  @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     this.logger.log("updateUserItemAndAchievement");
     const users = await this.prismaService.user.findMany({});
@@ -187,11 +187,6 @@ export class CronService {
             },
           });
         }
-
-        await this.web3Service.bindItemIdsToProfileIds(
-          itemTokenIds,
-          profileTokenIdsByItemTokenIds
-        );
       }
 
       // Mapping Achievements
@@ -234,11 +229,6 @@ export class CronService {
             },
           });
         }
-
-        await this.web3Service.bindAchievementIdsToProfileIds(
-          achievementTokenIds.map(String),
-          profileTokenIdsByAchievementTokenIds.map(String)
-        );
       }
     }
   }
