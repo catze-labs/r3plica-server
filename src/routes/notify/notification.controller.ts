@@ -6,8 +6,8 @@ import { PostSlackNotificationDto } from "./dto/post-slack-notification.dto";
 export class NotificationController {
   constructor(private readonly notifyService: NotificationService) {}
 
-  @Post()
-  async sendSlackNotify(@Body() message: PostSlackNotificationDto) {
-    await this.notifyService.sendSlackNotify(message);
-  }
+  // @Post()
+  // async sendSlackNotify(@Body() message: PostSlackNotificationDto) {
+  //   await this.notifyService.sendSlackNotify(message);
+  // }
 }
