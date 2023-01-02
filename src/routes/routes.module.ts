@@ -5,6 +5,7 @@ import { NonceController } from "./nonce/nonce.controller";
 import { TransferController } from "./transfer/transfer.controller";
 import { ServicesModule } from "src/services/services.module";
 import { MetadataController } from "./metadata/metadata.controller";
+import { NotificationController } from "./notify/notification.controller";
 
 @Module({
   imports: [ServicesModule],
@@ -14,6 +15,7 @@ import { MetadataController } from "./metadata/metadata.controller";
     NonceController,
     TransferController,
     MetadataController,
+    NotificationController,
   ],
 })
 export class RoutesModule {}

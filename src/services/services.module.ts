@@ -6,6 +6,7 @@ import { NonceService } from "./nonce/nonce.service";
 import { PlayFabService } from "./playfab/playfab.service";
 import { SignatureService } from "./signature/signature.service";
 import { UserService } from "./user/user.service";
+import { NotificationService } from "./notification/notification.service";
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { UserService } from "./user/user.service";
     SignatureService,
     UserService,
     Web3Service,
+    NotificationService,
   ],
   exports: [
     PrismaService,
@@ -25,6 +27,7 @@ import { UserService } from "./user/user.service";
     SignatureService,
     UserService,
     Web3Service,
+    NotificationService,
   ],
 })
 export class ServicesModule {}

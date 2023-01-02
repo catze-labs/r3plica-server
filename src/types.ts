@@ -40,3 +40,24 @@ export interface UserAchievementWrapper extends UserAchievement {
   isTransferred: boolean;
   transfer?: achievementTransfer;
 }
+
+export enum SlackColor {
+  primary = "#007bff",
+  info = "#17a2b8",
+  success = "#28a745",
+  warning = "#ffc107",
+  danger = "#dc3545",
+}
+export interface SlackMessageField {
+  title: string;
+  value: string;
+}
+export interface SlackMessage {
+  title: string;
+  text: string;
+  ts?: number;
+  color?: string;
+  fields?: SlackMessageField[];
+  footer?: string;
+  mrkdwn?: boolean;
+}

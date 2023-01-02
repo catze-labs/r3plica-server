@@ -5,6 +5,8 @@ import { PlayFabService } from "../playfab/playfab.service";
 import { TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS } from "../../constants";
 import { Web3Service } from "src/web3.service";
 import { profileMint } from "@prisma/client";
+import { NotificationService } from "../notification/notification.service";
+import { SlackColor } from "src/types";
 
 @Injectable()
 export class CronService {
@@ -13,7 +15,8 @@ export class CronService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly playFabService: PlayFabService,
-    private readonly web3Service: Web3Service
+    private readonly web3Service: Web3Service,
+    private readonly notifyService: NotificationService
   ) {}
 
   @Cron("*/1 * * * *")
@@ -57,6 +60,14 @@ export class CronService {
           },
         });
       }
+
+      await this.notifyService.sendSlackNotify({
+        title: "r3plica updateTransactionStatus Cron Job",
+        text: `PAFSBT Minting Request #${profileMint.id}\rHash ${
+          profileMint.txHash
+        }\r${txStatus ? "succeed" : "failed"}`,
+        color: txStatus ? SlackColor.success : SlackColor.danger,
+      });
     }
 
     // Update profile transfer tx status
@@ -81,6 +92,14 @@ export class CronService {
         data: {
           txStatus,
         },
+      });
+
+      await this.notifyService.sendSlackNotify({
+        title: "r3plica updateTransactionStatus Cron Job",
+        text: `PAFSBT Transfer #${profileTransfer.id}\rHash ${
+          profileTransfer.txHash
+        })\r${txStatus ? "succeed" : "failed"}`,
+        color: txStatus ? SlackColor.success : SlackColor.danger,
       });
     }
 
@@ -107,6 +126,14 @@ export class CronService {
           txStatus,
         },
       });
+
+      await this.notifyService.sendSlackNotify({
+        title: "r3plica updateTransactionStatus Cron Job",
+        text: `IAFSBT Transfer #${itemTransfer.id}\rHash ${
+          itemTransfer.txHash
+        }\r${txStatus ? "succeed" : "failed"}`,
+        color: txStatus ? SlackColor.success : SlackColor.danger,
+      });
     }
 
     // // Update achievement transfer tx status
@@ -116,8 +143,6 @@ export class CronService {
           txStatus: null,
         },
       });
-
-    console.log(achievementTransfers);
 
     for (const achievementTransfer of achievementTransfers) {
       const txStatus: boolean | null =
@@ -136,6 +161,14 @@ export class CronService {
         data: {
           txStatus,
         },
+      });
+
+      await this.notifyService.sendSlackNotify({
+        title: "r3plica updateTransactionStatus Cron Job",
+        text: `AAFSBT Transfer #${achievementTransfer.id}\rHash ${
+          achievementTransfer.txHash
+        }\r${txStatus ? "succeed" : "failed"}`,
+        color: txStatus ? SlackColor.success : SlackColor.danger,
       });
     }
   }
@@ -185,6 +218,11 @@ export class CronService {
               playFabId: user.playFabId,
             },
           });
+
+          await this.notifyService.sendSlackNotify({
+            title: "r3plica updateUserItemAndAchievement Cron Job",
+            text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\rTokenized for USER #${user.playFabId}`,
+          });
         }
       }
 
@@ -227,6 +265,11 @@ export class CronService {
               playFabId: user.playFabId,
             },
           });
+
+          await this.notifyService.sendSlackNotify({
+            title: "r3plica updateUserItemAndAchievement Cron Job",
+            text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
+          });
         }
       }
     }
@@ -262,6 +305,11 @@ export class CronService {
       }
 
       await this.web3Service.mintPAFSBT(user.playFabId);
+
+      await this.notifyService.sendSlackNotify({
+        title: "r3plica mintProfileTokenForced Cron Job",
+        text: `PAFSBT Force Minted\rUSER #${user.playFabId}`,
+      });
     }
   }
 }

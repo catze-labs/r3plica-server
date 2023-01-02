@@ -15,5 +15,6 @@ declare namespace NodeJS {
     BSCAN_API_KEY: string;
 
     APOTHEM_PROVIDER: string;
+    SLACK_WEBHOOK_URL: string;
   }
 }
