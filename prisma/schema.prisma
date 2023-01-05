@@ -10,22 +10,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum chain {
+  BNB
+  XDC
+}
+
 model user {
-  playFabId     String   @id
-  email         String   @unique
-  walletAddress String?
-  created       DateTime @default(now()) @db.DateTime(6)
-  updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
-
-  itemTokens    itemToken[]
-  itemTransfers itemTransfer[]
-
+  playFabId            String                @id
+  email                String                @unique
+  chain                chain?
+  walletAddress        String?
+  created              DateTime              @default(now()) @db.DateTime(6)
+  updated              DateTime              @default(now()) @updatedAt @db.DateTime(6)
+  itemTokens           itemToken[]
+  itemTransfers        itemTransfer[]
   achievementTokens    achievementToken[]
   achievementTransfers achievementTransfer[]
-
-  profileToken     profileToken?
-  profileMints     profileMint[]
-  profileTransfers profileTransfer[]
+  profileToken         profileToken?
+  profileMints         profileMint[]
+  profileTransfers     profileTransfer[]
 }
 
 model nonce {
@@ -41,6 +44,7 @@ model nonce {
 
 model itemToken {
   tokenId         String   @id
+  chain           chain
   itemId          Int
   contractAddress String
   playFabId       String?
@@ -51,6 +55,7 @@ model itemToken {
 
 model itemTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   itemId          Int
@@ -65,6 +70,7 @@ model itemTransfer {
 model achievementToken {
   tokenId         String   @id
   achievementId   Int
+  chain           chain
   contractAddress String
   playFabId       String?
   user            user?    @relation(fields: [playFabId], references: [playFabId])
@@ -74,6 +80,7 @@ model achievementToken {
 
 model achievementTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   achievementId   Int
@@ -87,6 +94,7 @@ model achievementTransfer {
 
 model profileToken {
   tokenId         String   @id
+  chain           chain
   contractAddress String
   playFabId       String   @unique
   user            user     @relation(fields: [playFabId], references: [playFabId])
@@ -96,6 +104,7 @@ model profileToken {
 
 model profileTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   playFabId       String
@@ -107,6 +116,7 @@ model profileTransfer {
 
 model profileMint {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   playFabId       String
