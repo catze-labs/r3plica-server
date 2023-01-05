@@ -1,7 +1,7 @@
 name: Worker Deploy
 on:
   push:
-    branches: [ dev ]
+    branches: [xdc-dev]
 
 jobs:
   deploy:
