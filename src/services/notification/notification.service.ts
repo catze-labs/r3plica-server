@@ -11,7 +11,8 @@ export class NotificationService {
     if (!message) return;
 
     if (!message.ts) message.ts = dayjs().unix();
-    if (!message.footer) message.footer = `r3plica ${process.env.ENVIRONMENT}`;
+    if (!message.footer)
+      message.footer = `r3plica XDC-${process.env.ENVIRONMENT}`;
     if (!message.color) message.color = SlackColor.info;
 
     const data: any = {

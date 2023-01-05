@@ -10,9 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum chain {
+  BNB
+  XDC
+}
+
 model user {
   playFabId     String   @id
   email         String   @unique
+  chain         chain?
   walletAddress String?
   created       DateTime @default(now()) @db.DateTime(6)
   updated       DateTime @default(now()) @updatedAt @db.DateTime(6)
@@ -37,11 +43,6 @@ model nonce {
   used    Boolean  @default(false)
 
   @@index([address])
-}
-
-enum chain {
-  BNB
-  XDC
 }
 
 model itemToken {

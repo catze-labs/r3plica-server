@@ -21,12 +21,14 @@ export class Web3Service {
   async getFsbtTransfers(playFabId: string) {
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
+        chain: "XDC",
         playFabId,
       },
     });
 
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "XDC",
         playFabId,
       },
     });
@@ -34,6 +36,7 @@ export class Web3Service {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "XDC",
           playFabId,
         },
       });
@@ -71,6 +74,13 @@ export class Web3Service {
       });
     }
 
+    if (user.chain !== "XDC") {
+      throw new NotFoundException({
+        message: "User wallet is not XDC wallet",
+        playFabId,
+      });
+    }
+
     const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
       process.env.PRIVATE_KEY
     ).address;
@@ -83,6 +93,7 @@ export class Web3Service {
     const achievementTokens =
       await this.prismaService.achievementToken.findMany({
         where: {
+          chain: "XDC",
           playFabId,
           achievementId: {
             in: achievementIds,
@@ -101,6 +112,7 @@ export class Web3Service {
 
     const itemTokens = await this.prismaService.itemToken.findMany({
       where: {
+        chain: "XDC",
         playFabId,
         itemId: {
           in: itemIds,
@@ -178,18 +190,6 @@ export class Web3Service {
         ),
       ]);
 
-      console.log(itemTokenIds);
-      console.log(achievementTokenIds);
-
-      console.log(
-        "setItemIdsAndProfileIdsTxReceipt",
-        setItemIdsAndProfileIdsTxReceipt
-      );
-      console.log(
-        "setAchievementIdsAndProfileIdsTxReceipt",
-        setAchievementIdsAndProfileIdsTxReceipt
-      );
-
       setAchievementIdsAndProfileIdsTxHash =
         setAchievementIdsAndProfileIdsTxReceipt.transactionHash;
       setItemIdsAndProfileIdsTxHash =
@@ -200,6 +200,7 @@ export class Web3Service {
 
       for (const achievementToken of achievementTokens) {
         achievementTransferCreateData.push({
+          chain: "XDC",
           playFabId: playFabId,
           txHash: setAchievementIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -210,6 +211,7 @@ export class Web3Service {
 
       for (const itemToken of itemTokens) {
         itemTransferCreateData.push({
+          chain: "XDC",
           playFabId: playFabId,
           txHash: setItemIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -378,6 +380,7 @@ export class Web3Service {
       const tokenId = await this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
+          chain: "XDC",
           playFabId: user.playFabId,
           tokenId,
           txHash: signedTx.transactionHash,
@@ -386,7 +389,7 @@ export class Web3Service {
       });
 
       Logger.debug(
-        `PAFSBT mint request Tx sended - User ${user.playFabId} : Tx ${receipt["transactionHash"]}`
+        `XDC PAFSBT mint request Tx sended - User ${user.playFabId} : Tx ${receipt["transactionHash"]}`
       );
 
       return receipt["transactionHash"];
@@ -408,6 +411,7 @@ export class Web3Service {
 
     const profileToken = await this.prismaService.profileToken.findFirst({
       where: {
+        chain: "XDC",
         playFabId,
       },
     });
@@ -452,6 +456,7 @@ export class Web3Service {
 
       await this.prismaService.profileTransfer.create({
         data: {
+          chain: "XDC",
           playFabId: user.playFabId,
           txHash: receipt.transactionHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,

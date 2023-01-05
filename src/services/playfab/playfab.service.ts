@@ -169,6 +169,7 @@ export class PlayFabService {
         playFabId: playFabId,
       },
       data: {
+        chain: "XDC",
         walletAddress: userAddress,
       },
     });

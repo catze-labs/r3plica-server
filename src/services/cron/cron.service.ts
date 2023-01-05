@@ -27,6 +27,7 @@ export class CronService {
     const profileMints: profileMint[] =
       await this.prismaService.profileMint.findMany({
         where: {
+          chain: "XDC",
           txStatus: null,
         },
       });
@@ -54,6 +55,7 @@ export class CronService {
         );
         await this.prismaService.profileToken.create({
           data: {
+            chain: "XDC",
             tokenId,
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
             playFabId: profileMint.playFabId,
@@ -62,7 +64,7 @@ export class CronService {
       }
 
       await this.notifyService.sendSlackNotify({
-        title: "r3plica updateTransactionStatus Cron Job",
+        title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `PAFSBT Minting Request #${profileMint.id}\rHash ${
           profileMint.txHash
         }\r${txStatus ? "succeed" : "failed"}`,
@@ -95,7 +97,7 @@ export class CronService {
       });
 
       await this.notifyService.sendSlackNotify({
-        title: "r3plica updateTransactionStatus Cron Job",
+        title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `PAFSBT Transfer #${profileTransfer.id}\rHash ${
           profileTransfer.txHash
         })\r${txStatus ? "succeed" : "failed"}`,
@@ -106,6 +108,7 @@ export class CronService {
     // Update item transfer tx status
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "XDC",
         txStatus: null,
       },
     });
@@ -128,7 +131,7 @@ export class CronService {
       });
 
       await this.notifyService.sendSlackNotify({
-        title: "r3plica updateTransactionStatus Cron Job",
+        title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `IAFSBT Transfer #${itemTransfer.id}\rHash ${
           itemTransfer.txHash
         }\r${txStatus ? "succeed" : "failed"}`,
@@ -140,6 +143,7 @@ export class CronService {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "XDC",
           txStatus: null,
         },
       });
@@ -147,8 +151,6 @@ export class CronService {
     for (const achievementTransfer of achievementTransfers) {
       const txStatus: boolean | null =
         await this.web3Service.getTransactionStatus(achievementTransfer.txHash);
-
-      console.log(txStatus);
 
       if (txStatus === null) {
         continue;
@@ -164,7 +166,7 @@ export class CronService {
       });
 
       await this.notifyService.sendSlackNotify({
-        title: "r3plica updateTransactionStatus Cron Job",
+        title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `AAFSBT Transfer #${achievementTransfer.id}\rHash ${
           achievementTransfer.txHash
         }\r${txStatus ? "succeed" : "failed"}`,
@@ -181,6 +183,7 @@ export class CronService {
     for (const user of users) {
       const profileToken = await this.prismaService.profileToken.findFirst({
         where: {
+          chain: "XDC",
           playFabId: user.playFabId,
         },
       });
@@ -199,6 +202,7 @@ export class CronService {
         for (const item of items) {
           const itemToken = await this.prismaService.itemToken.findFirst({
             where: {
+              chain: "XDC",
               contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
               itemId: item.itemID,
               playFabId: null,
@@ -220,7 +224,7 @@ export class CronService {
           });
 
           await this.notifyService.sendSlackNotify({
-            title: "r3plica updateUserItemAndAchievement Cron Job",
+            title: "r3plica XDC updateUserItemAndAchievement Cron Job",
             text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\rTokenized for USER #${user.playFabId}`,
           });
         }
@@ -246,6 +250,7 @@ export class CronService {
           const achievementToken =
             await this.prismaService.achievementToken.findFirst({
               where: {
+                chain: "XDC",
                 contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
                 achievementId: achievement.questID,
                 playFabId: null,
@@ -267,7 +272,7 @@ export class CronService {
           });
 
           await this.notifyService.sendSlackNotify({
-            title: "r3plica updateUserItemAndAchievement Cron Job",
+            title: "r3plica XDC updateUserItemAndAchievement Cron Job",
             text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
           });
         }
