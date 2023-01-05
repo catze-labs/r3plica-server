@@ -39,8 +39,14 @@ model nonce {
   @@index([address])
 }
 
+enum chain {
+  BNB
+  XDC
+}
+
 model itemToken {
   tokenId         String   @id
+  chain           chain
   itemId          Int
   contractAddress String
   playFabId       String?
@@ -51,6 +57,7 @@ model itemToken {
 
 model itemTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   itemId          Int
@@ -65,6 +72,7 @@ model itemTransfer {
 model achievementToken {
   tokenId         String   @id
   achievementId   Int
+  chain           chain
   contractAddress String
   playFabId       String?
   user            user?    @relation(fields: [playFabId], references: [playFabId])
@@ -74,6 +82,7 @@ model achievementToken {
 
 model achievementTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   achievementId   Int
@@ -87,6 +96,7 @@ model achievementTransfer {
 
 model profileToken {
   tokenId         String   @id
+  chain           chain
   contractAddress String
   playFabId       String   @unique
   user            user     @relation(fields: [playFabId], references: [playFabId])
@@ -96,6 +106,7 @@ model profileToken {
 
 model profileTransfer {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   playFabId       String
@@ -107,6 +118,7 @@ model profileTransfer {
 
 model profileMint {
   id              Int      @id @default(autoincrement())
+  chain           chain
   txHash          String
   txStatus        Boolean?
   playFabId       String
