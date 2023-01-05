@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -111,6 +112,7 @@ export class PlayFabService {
     const playFabId: string = parsedData["PlayFabId"];
     const user: user = await this.prismaService.user.create({
       data: {
+        chain: "XDC",
         playFabId,
         email: email,
       },
@@ -122,7 +124,7 @@ export class PlayFabService {
 
       if (txHash)
         await this.notificationService.sendSlackNotify({
-          title: "r3plica Registered & Mint PAFSBT",
+          title: "r3plica XDC Registered & Mint PAFSBT",
           text: `User Register & PAFSBT Minted\rUSER #${user.playFabId}\rHash: ${txHash}`,
         });
     } catch (err) {
@@ -159,6 +161,17 @@ export class PlayFabService {
     walletAddress: string,
     signature: string
   ) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        playFabId,
+      },
+    });
+
+    if (user.chain !== "XDC")
+      throw new ForbiddenException({
+        message: "User is registered with BNB chain",
+      });
+
     const userAddress: string | undefined =
       await this.signatureService.getAddress(walletAddress, signature);
 
@@ -169,7 +182,6 @@ export class PlayFabService {
         playFabId: playFabId,
       },
       data: {
-        chain: "XDC",
         walletAddress: userAddress,
       },
     });
