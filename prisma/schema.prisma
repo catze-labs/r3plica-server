@@ -18,7 +18,7 @@ enum chain {
 model user {
   playFabId            String                @id
   email                String                @unique
-  chain                chain?
+  chain                chain
   walletAddress        String?
   created              DateTime              @default(now()) @db.DateTime(6)
   updated              DateTime              @default(now()) @updatedAt @db.DateTime(6)
