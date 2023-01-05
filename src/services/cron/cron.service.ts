@@ -18,7 +18,7 @@ export class CronService {
     private readonly web3Service: Web3Service
   ) {}
 
-  @Cron("*/3 * * * *")
+  @Cron("*/1 * * * *")
   async updateTransactionStatus() {
     this.logger.log("updateTransactionStatus");
 
@@ -26,6 +26,7 @@ export class CronService {
     const profileMints: profileMint[] =
       await this.prismaService.profileMint.findMany({
         where: {
+          chain: "BNB",
           txStatus: null,
         },
       });
@@ -47,6 +48,7 @@ export class CronService {
         );
         await this.prismaService.profileToken.create({
           data: {
+            chain: "BNB",
             tokenId,
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
             playFabId: profileMint.playFabId,
@@ -58,6 +60,7 @@ export class CronService {
     // Update profile transfer tx status
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
+        chain: "BNB",
         txStatus: null,
       },
     });
@@ -80,6 +83,7 @@ export class CronService {
     // Update item transfer tx status
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "BNB",
         txStatus: null,
       },
     });
@@ -101,6 +105,7 @@ export class CronService {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "BNB",
           txStatus: null,
         },
       });
@@ -129,6 +134,7 @@ export class CronService {
     for (const user of users) {
       const profileToken = await this.prismaService.profileToken.findFirst({
         where: {
+          chain: "BNB",
           playFabId: user.playFabId,
         },
       });
@@ -145,6 +151,7 @@ export class CronService {
       for (const item of items) {
         const itemToken = await this.prismaService.itemToken.findFirst({
           where: {
+            chain: "BNB",
             contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
             itemId: item.itemID,
             playFabId: null,
@@ -190,6 +197,7 @@ export class CronService {
         const achievementToken =
           await this.prismaService.achievementToken.findFirst({
             where: {
+              chain: "BNB",
               contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
               achievementId: achievement.questID,
               playFabId: null,
@@ -222,6 +230,9 @@ export class CronService {
   async mintProfileTokenForced() {
     this.logger.log("mintProfileTokenForced");
     let users = await this.prismaService.user.findMany({
+      where: {
+        chain: "BNB",
+      },
       include: {
         profileToken: true,
       },
@@ -231,6 +242,7 @@ export class CronService {
     for (const user of users) {
       const profileMint = await this.prismaService.profileMint.findFirst({
         where: {
+          chain: "BNB",
           playFabId: user.playFabId,
           txStatus: {
             not: false,

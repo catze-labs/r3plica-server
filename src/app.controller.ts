@@ -13,7 +13,6 @@ export class AppController {
   @Get("/health")
   @ApiTags("Server")
   async getHealth() {
-    await this.web3Service.getProfileTokenId("8EA94BEC5C76F576");
     return true;
   }
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -108,6 +109,7 @@ export class PlayFabService {
 
     const user: user = await this.prismaService.user.create({
       data: {
+        chain: "BNB",
         playFabId: parsedData["PlayFabId"],
         email: email,
       },
@@ -142,6 +144,17 @@ export class PlayFabService {
     walletAddress: string,
     signature: string
   ) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        playFabId,
+      },
+    });
+
+    if (user.chain !== "BNB")
+      throw new ForbiddenException({
+        message: "User is registered with XDC chain",
+      });
+
     const userAddress: string | undefined =
       await this.signatureService.getAddress(walletAddress, signature);
 
@@ -152,6 +165,7 @@ export class PlayFabService {
         playFabId: playFabId,
       },
       data: {
+        chain: "BNB",
         walletAddress: userAddress,
       },
     });
@@ -188,6 +202,13 @@ export class PlayFabService {
     let userItems: UserItem[] =
       axiosReturnOrThrow(response)["FunctionResult"] || [];
 
+    // Is item token mapped to user
+    const itemTokens = await this.prismaService.itemToken.findMany({
+      where: {
+        playFabId,
+      },
+    });
+
     // Transfer history
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
@@ -205,6 +226,7 @@ export class PlayFabService {
         ...userItem,
         isTransferred: false,
         transfer: null,
+        isTokenized: false,
       };
 
       // Compare transferred item to user already have item
@@ -212,6 +234,13 @@ export class PlayFabService {
         if (itemTransfer.itemId === userItem.itemID && itemTransfer.txStatus) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = itemTransfer;
+        }
+      }
+
+      // Compare item token to user already have
+      for (const itemToken of itemTokens) {
+        if (itemToken.itemId === userItem.itemID) {
+          wrappedItem.isTokenized = true;
         }
       }
 
@@ -250,6 +279,14 @@ export class PlayFabService {
 
     userAchievements.filter((achievement) => achievement.state === 4);
 
+    // Tokenized history
+    const achievementTokens =
+      await this.prismaService.achievementToken.findMany({
+        where: {
+          playFabId,
+        },
+      });
+
     // Transfer history
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
@@ -263,6 +300,7 @@ export class PlayFabService {
         ...userAchievement,
         isTransferred: false,
         transfer: null,
+        isTokenized: false,
       };
 
       for (const achievementTransfer of achievementTransfers) {
@@ -272,6 +310,12 @@ export class PlayFabService {
         ) {
           wrappedItem.isTransferred = true;
           wrappedItem.transfer = achievementTransfer;
+        }
+      }
+
+      for (const achievementToken of achievementTokens) {
+        if (achievementToken.achievementId === userAchievement.questID) {
+          wrappedItem.isTokenized = true;
         }
       }
 

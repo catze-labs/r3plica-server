@@ -20,12 +20,14 @@ export class Web3Service {
   async getFsbtTransfers(playFabId: string) {
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
       where: {
+        chain: "BNB",
         playFabId,
       },
     });
 
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "BNB",
         playFabId,
       },
     });
@@ -33,6 +35,7 @@ export class Web3Service {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "BNB",
           playFabId,
         },
       });
@@ -70,6 +73,13 @@ export class Web3Service {
       });
     }
 
+    if (user.chain !== "BNB") {
+      throw new NotFoundException({
+        message: "User wallet is not BNB wallet",
+        playFabId,
+      });
+    }
+
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -78,6 +88,7 @@ export class Web3Service {
     const achievementTokens =
       await this.prismaService.achievementToken.findMany({
         where: {
+          chain: "BNB",
           playFabId,
           achievementId: {
             in: achievementIds,
@@ -96,6 +107,7 @@ export class Web3Service {
 
     const itemTokens = await this.prismaService.itemToken.findMany({
       where: {
+        chain: "BNB",
         playFabId,
         itemId: {
           in: itemIds,
@@ -176,6 +188,7 @@ export class Web3Service {
       let itemTransferCreateData = [];
       for (const achievementToken of achievementTokens) {
         achievementTransferCreateData.push({
+          chain: "BNB",
           playFabId: playFabId,
           txHash: setAchievementIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -184,6 +197,7 @@ export class Web3Service {
       }
       for (const itemToken of itemTokens) {
         itemTransferCreateData.push({
+          chain: "BNB",
           playFabId: playFabId,
           txHash: setItemIdsAndProfileIdsTxHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -328,6 +342,7 @@ export class Web3Service {
       const tokenId = await this.getProfileTokenId(user.playFabId);
       await this.prismaService.profileMint.create({
         data: {
+          chain: "BNB",
           playFabId: user.playFabId,
           tokenId,
           txHash: receipt.transactionHash,
@@ -356,6 +371,7 @@ export class Web3Service {
 
     const profileToken = await this.prismaService.profileToken.findFirst({
       where: {
+        chain: "BNB",
         playFabId,
       },
     });
@@ -400,6 +416,7 @@ export class Web3Service {
 
       await this.prismaService.profileTransfer.create({
         data: {
+          chain: "BNB",
           playFabId: user.playFabId,
           txHash: receipt.transactionHash,
           contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
