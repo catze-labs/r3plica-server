@@ -1,6 +1,5 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { NotificationService } from "src/services/notification/notification.service";
-import { PostSlackNotificationDto } from "./dto/post-slack-notification.dto";
 
 @Controller("notification")
 export class NotificationController {

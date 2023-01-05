@@ -48,10 +48,12 @@ export enum SlackColor {
   warning = "#ffc107",
   danger = "#dc3545",
 }
+
 export interface SlackMessageField {
   title: string;
   value: string;
 }
+
 export interface SlackMessage {
   title: string;
   text: string;
