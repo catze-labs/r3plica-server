@@ -1,4 +1,4 @@
-name: Worker Deploy
+name: xdc-dev deploy
 on:
   push:
     branches: [xdc-dev]
@@ -49,7 +49,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
           push: true
           build-args: |
-            ENVIRONMENT=dev
+            ENVIRONMENT=xdc-dev
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NAME }}:${{ steps.metadata.outputs.branch }}-latest
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NAME }}:${{ steps.metadata.outputs.branch }}-${{ steps.metadata.outputs.date }}-${{ steps.metadata.outputs.short_sha }}
