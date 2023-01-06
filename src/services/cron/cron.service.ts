@@ -16,7 +16,7 @@ export class CronService {
     private readonly prismaService: PrismaService,
     private readonly playFabService: PlayFabService,
     private readonly web3Service: Web3Service,
-    private readonly notifyService: NotificationService
+    private readonly notificationService: NotificationService
   ) {}
 
   @Cron("*/1 * * * *")
@@ -63,7 +63,7 @@ export class CronService {
         });
       }
 
-      await this.notifyService.sendSlackNotify({
+      await this.notificationService.sendSlackNotify({
         title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `PAFSBT Minting Request #${profileMint.id}\rHash ${
           profileMint.txHash
@@ -96,7 +96,7 @@ export class CronService {
         },
       });
 
-      await this.notifyService.sendSlackNotify({
+      await this.notificationService.sendSlackNotify({
         title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `PAFSBT Transfer #${profileTransfer.id}\rHash ${
           profileTransfer.txHash
@@ -130,7 +130,7 @@ export class CronService {
         },
       });
 
-      await this.notifyService.sendSlackNotify({
+      await this.notificationService.sendSlackNotify({
         title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `IAFSBT Transfer #${itemTransfer.id}\rHash ${
           itemTransfer.txHash
@@ -165,7 +165,7 @@ export class CronService {
         },
       });
 
-      await this.notifyService.sendSlackNotify({
+      await this.notificationService.sendSlackNotify({
         title: "r3plica XDC updateTransactionStatus Cron Job",
         text: `AAFSBT Transfer #${achievementTransfer.id}\rHash ${
           achievementTransfer.txHash
@@ -175,7 +175,7 @@ export class CronService {
     }
   }
 
-  @Cron("*/1 * * * *")
+  @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     this.logger.log("updateUserItemAndAchievement");
     const users = await this.prismaService.user.findMany({});
@@ -223,7 +223,7 @@ export class CronService {
             },
           });
 
-          await this.notifyService.sendSlackNotify({
+          await this.notificationService.sendSlackNotify({
             title: "r3plica XDC updateUserItemAndAchievement Cron Job",
             text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\rTokenized for USER #${user.playFabId}`,
           });
@@ -271,7 +271,7 @@ export class CronService {
             },
           });
 
-          await this.notifyService.sendSlackNotify({
+          await this.notificationService.sendSlackNotify({
             title: "r3plica XDC updateUserItemAndAchievement Cron Job",
             text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
           });
@@ -280,10 +280,13 @@ export class CronService {
     }
   }
 
-  @Cron("*/3 * * * *")
+  @Cron("*/1 * * * *")
   async mintProfileTokenForced() {
     this.logger.log("mintProfileTokenForced");
     let users = await this.prismaService.user.findMany({
+      where: {
+        chain: "XDC",
+      },
       include: {
         profileToken: true,
       },
@@ -293,6 +296,7 @@ export class CronService {
     for (const user of users) {
       const profileMint = await this.prismaService.profileMint.findFirst({
         where: {
+          chain: "XDC",
           playFabId: user.playFabId,
           OR: [
             {
@@ -311,8 +315,8 @@ export class CronService {
 
       await this.web3Service.mintPAFSBT(user.playFabId);
 
-      await this.notifyService.sendSlackNotify({
-        title: "r3plica mintProfileTokenForced Cron Job",
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC mintProfileTokenForced Cron Job",
         text: `PAFSBT Force Minted\rUSER #${user.playFabId}`,
       });
     }

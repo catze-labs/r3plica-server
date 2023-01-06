@@ -1,5 +1,6 @@
 const itemTransfer = {
   id: { type: "integer" },
+  chain: { type: "string" },
   txHash: { type: "string" },
   item: { type: "object" },
   playFabId: { type: "string" },
@@ -11,6 +12,7 @@ const itemTransfer = {
 
 const achievementTransfer = {
   id: { type: "integer" },
+  chain: { type: "string" },
   txHash: { type: "string" },
   achievement: { type: "object" },
   playFabId: { type: "string" },

@@ -137,6 +137,26 @@ export class PlayFabService {
 
   async login(email: string, password: string) {
     const path = "/Client/LoginWithEmailAddress";
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new BadRequestException({
+        message: "Email address does not exist",
+        data: { email },
+      });
+    }
+
+    if (user.chain !== "XDC") {
+      throw new BadRequestException({
+        message: "User is not registered with XDC r3plica",
+        data: { email },
+      });
+    }
+
     const params = {
       TitleId: process.env.PLAY_FAB_TITLE_ID,
       Email: email,
@@ -169,7 +189,7 @@ export class PlayFabService {
 
     if (user.chain !== "XDC")
       throw new ForbiddenException({
-        message: "User is registered with BNB chain",
+        message: "User is not registered with XDC r3plica",
       });
 
     const userAddress: string | undefined =
@@ -221,6 +241,7 @@ export class PlayFabService {
     // Is item token mapped to user
     const itemTokens = await this.prismaService.itemToken.findMany({
       where: {
+        chain: "XDC",
         playFabId,
       },
     });
@@ -228,6 +249,7 @@ export class PlayFabService {
     // Transfer history
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "XDC",
         playFabId,
       },
     });
@@ -299,6 +321,7 @@ export class PlayFabService {
     const achievementTokens =
       await this.prismaService.achievementToken.findMany({
         where: {
+          chain: "XDC",
           playFabId,
         },
       });
@@ -307,6 +330,7 @@ export class PlayFabService {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "XDC",
           playFabId,
         },
       });

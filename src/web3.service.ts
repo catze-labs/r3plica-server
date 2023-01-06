@@ -66,17 +66,17 @@ export class Web3Service {
       });
     }
 
-    const walletAddress = user.walletAddress;
-    if (!walletAddress) {
+    if (user.chain !== "XDC") {
       throw new NotFoundException({
-        message: "User wallet is not linked",
+        message: "Not r3plica XDC user",
         playFabId,
       });
     }
 
-    if (user.chain !== "XDC") {
+    const walletAddress = user.walletAddress;
+    if (!walletAddress) {
       throw new NotFoundException({
-        message: "User wallet is not XDC wallet",
+        message: "User wallet is not linked",
         playFabId,
       });
     }
@@ -339,6 +339,13 @@ export class Web3Service {
       },
     });
 
+    if (user.chain !== "XDC") {
+      throw new NotFoundException({
+        message: "Not r3plica XDC user",
+        playFabId,
+      });
+    }
+
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -405,6 +412,13 @@ export class Web3Service {
       },
     });
 
+    if (user.chain !== "XDC") {
+      throw new NotFoundException({
+        message: "Not r3plica XDC user",
+        playFabId,
+      });
+    }
+
     if (!user.walletAddress) {
       throw new NotFoundException("User wallet is not linked");
     }
@@ -463,7 +477,7 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`PAFSBT is sent for user ${user.playFabId}`);
+      Logger.debug(`XDC - PAFSBT is sent for user ${user.playFabId}`);
 
       return { txHash: receipt["transactionHash"] };
     } catch (err) {
