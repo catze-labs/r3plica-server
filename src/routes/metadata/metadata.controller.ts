@@ -77,7 +77,7 @@ export class MetadataController {
   async getProfileTokenMetadata(@Param("tokenId") tokenId: string) {
     return {
       name: "Genesis PAFSBT",
-      description: "Profile by Assetized Future SBT - by r3plica",
+      description: "Profile by Assetized Future SBT - by r3plica-BNB",
       image: "https://r3plica-web.vercel.app/fsbt.png",
     };
   }

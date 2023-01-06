@@ -15,6 +15,7 @@ import {
 } from "src/types";
 import { axiosReturnOrThrow } from "src/utils";
 import { Web3Service } from "src/web3.service";
+import { NotificationService } from "../notification/notification.service";
 import { SignatureService } from "../signature/signature.service";
 import { UserService } from "../user/user.service";
 
@@ -24,7 +25,8 @@ export class PlayFabService {
     private readonly prismaService: PrismaService,
     private readonly signatureService: SignatureService,
     private readonly userService: UserService,
-    private readonly web3Service: Web3Service
+    private readonly web3Service: Web3Service,
+    private readonly notificationService: NotificationService
   ) {}
 
   async validateEmail(email: string) {
@@ -106,7 +108,7 @@ export class PlayFabService {
     }
 
     const parsedData = axiosReturnOrThrow(response);
-
+    const playFabId: string = parsedData["PlayFabId"];
     const user: user = await this.prismaService.user.create({
       data: {
         chain: "BNB",
@@ -115,11 +117,46 @@ export class PlayFabService {
       },
     });
 
+    try {
+      const txHash = await this.web3Service.mintPAFSBT(playFabId);
+      parsedData["txHash"] = txHash;
+
+      if (txHash)
+        await this.notificationService.sendSlackNotify({
+          title: "r3plica BNB Registered & Mint PAFSBT",
+          text: `User Register & PAFSBT Minted\rUSER #${user.playFabId}\rHash: ${txHash}`,
+        });
+    } catch (err) {
+      console.log("Error", err);
+      return parsedData;
+    }
+
     return parsedData;
   }
 
   async login(email: string, password: string) {
     const path = "/Client/LoginWithEmailAddress";
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException({
+        message: "Email address does not exist",
+        data: { email },
+      });
+    }
+
+    if (user.chain !== "BNB") {
+      throw new BadRequestException({
+        message: "User is not registered with BNB r3plica",
+        data: { email },
+      });
+    }
+
     const params = {
       TitleId: process.env.PLAY_FAB_TITLE_ID,
       Email: email,
@@ -152,7 +189,7 @@ export class PlayFabService {
 
     if (user.chain !== "BNB")
       throw new ForbiddenException({
-        message: "User is registered with XDC chain",
+        message: "User is not registered with BNB r3plica",
       });
 
     const userAddress: string | undefined =
@@ -165,7 +202,6 @@ export class PlayFabService {
         playFabId: playFabId,
       },
       data: {
-        chain: "BNB",
         walletAddress: userAddress,
       },
     });
@@ -205,6 +241,7 @@ export class PlayFabService {
     // Is item token mapped to user
     const itemTokens = await this.prismaService.itemToken.findMany({
       where: {
+        chain: "BNB",
         playFabId,
       },
     });
@@ -212,6 +249,7 @@ export class PlayFabService {
     // Transfer history
     const itemTransfers = await this.prismaService.itemTransfer.findMany({
       where: {
+        chain: "BNB",
         playFabId,
       },
     });
@@ -283,6 +321,7 @@ export class PlayFabService {
     const achievementTokens =
       await this.prismaService.achievementToken.findMany({
         where: {
+          chain: "BNB",
           playFabId,
         },
       });
@@ -291,6 +330,7 @@ export class PlayFabService {
     const achievementTransfers =
       await this.prismaService.achievementTransfer.findMany({
         where: {
+          chain: "BNB",
           playFabId,
         },
       });

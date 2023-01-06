@@ -115,6 +115,28 @@ export const registerApiResponse = {
   description: "Register user in server and PlayFab",
   schema: {
     properties: playFabRegisterResponse,
+    example: {
+      PlayFabId: "71C1D74D171B9959",
+      SessionTicket:
+        "71C1D74D171B9959-428981242E65B591-E8C661C7955F6F40-C329F-8DAE8A41B265959-fseDcmCapPUIxLDgSTpCjPLRJ8Dh/ulLsdJO1qR3t7g=",
+      SettingsForUser: {
+        NeedsAttribution: false,
+        GatherDeviceInfo: true,
+        GatherFocusInfo: true,
+      },
+      EntityToken: {
+        EntityToken:
+          "NHxJSTFib3FTdkFYa3JGZkc1dzV1cGcyYjVpMUUyazNwc1VGUzhWSURNY3E4PXx7ImkiOiIyMDIyLTEyLTI4VDA3OjIxOjE1LjQxMjUxNDVaIiwiaWRwIjoiUGxheUZhYiIsImUiOiIyMDIyLTEyLTI5VDA3OjIxOjE1LjQxMjUxNDVaIiwidGlkIjoiMTFmZTU3MWM1MDBiNDYzYmE3NzRlMTNjYWFhZTAwMWYiLCJpZGkiOiI3MUMxRDc0RDE3MUI5OTU5IiwiaCI6IkVGNUUyQjA1MDIzMEZEMDEiLCJlYyI6InRpdGxlX3BsYXllcl9hY2NvdW50ITQyODk4MTI0MkU2NUI1OTEvQzMyOUYvNzFDMUQ3NEQxNzFCOTk1OS9FOEM2NjFDNzk1NUY2RjQwLyIsImVpIjoiRThDNjYxQzc5NTVGNkY0MCIsImV0IjoidGl0bGVfcGxheWVyX2FjY291bnQifQ==",
+        TokenExpiration: "2022-12-29T07:21:15.412Z",
+        Entity: {
+          Id: "E8C661C7955F6F40",
+          Type: "title_player_account",
+          TypeString: "title_player_account",
+        },
+      },
+      txHash:
+        "0x198001f700cea99a5f7bf46e3c2cdd2b9f78d412fe50905c05c65c877a969cf4",
+    },
   },
 };
 
