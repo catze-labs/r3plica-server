@@ -1,5 +1,6 @@
 const itemTransfer = {
   id: { type: "integer" },
+  chain: { type: "string" },
   txHash: { type: "string" },
   item: { type: "object" },
   playFabId: { type: "string" },
@@ -11,6 +12,7 @@ const itemTransfer = {
 
 const achievementTransfer = {
   id: { type: "integer" },
+  chain: { type: "string" },
   txHash: { type: "string" },
   achievement: { type: "object" },
   playFabId: { type: "string" },
@@ -38,7 +40,7 @@ export const getTransferHistoryResponse = {
   },
 };
 
-export const postTransferResponse = {
+export const postItemsAndAchievementsTransferResponse = {
   description: "Return transfer transaction hash",
   status: 200,
   schema: {
@@ -48,6 +50,19 @@ export const postTransferResponse = {
         type: "string",
       },
       achievementTxHash: {
+        type: "string",
+      },
+    },
+  },
+};
+
+export const postProfileTransferResponse = {
+  description: "Return transfer transaction hash",
+  status: 200,
+  schema: {
+    type: "object",
+    properties: {
+      txHash: {
         type: "string",
       },
     },

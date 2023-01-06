@@ -7,6 +7,8 @@ import {
 } from "./constants";
 import { PrismaService } from "./prisma.service";
 import { ethers } from "ethers";
+import { axiosReturnOrThrow } from "./utils";
+import axios from "axios";
 
 @Injectable()
 export class Web3Service {
@@ -65,6 +67,13 @@ export class Web3Service {
       });
     }
 
+    if (user.chain !== "BNB") {
+      throw new NotFoundException({
+        message: "Not r3plica BNB user",
+        playFabId,
+      });
+    }
+
     const walletAddress = user.walletAddress;
     if (!walletAddress) {
       throw new NotFoundException({
@@ -73,12 +82,9 @@ export class Web3Service {
       });
     }
 
-    if (user.chain !== "BNB") {
-      throw new NotFoundException({
-        message: "User wallet is not BNB wallet",
-        playFabId,
-      });
-    }
+    const deployAddress = this.web3.eth.accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY
+    ).address;
 
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
@@ -121,6 +127,13 @@ export class Web3Service {
       profileIdsByItemIds.push(ethers.utils.formatBytes32String(playFabId));
     }
 
+    const nonce = await this.web3.eth.getTransactionCount(
+      deployAddress,
+      "latest"
+    );
+    const gas = Number(await this.web3.eth.getGasPrice());
+    const gasLimit = 6000000;
+
     // Create the transactions and estimate gas fee
     const setAchievementIdsAndProfileIdsTx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
@@ -130,22 +143,20 @@ export class Web3Service {
           profileIdsByAchievementIds
         )
         .encodeABI(),
+      nonce,
+      gas: gas * 2 + "",
+      gasLimit,
     };
-
-    setAchievementIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
-      setAchievementIdsAndProfileIdsTx
-    );
 
     const setItemIdsAndProfileIdsTx = {
       to: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
       data: contract.methods
         .setItemIdsAndProfileIds(itemTokenIds, profileIdsByItemIds)
         .encodeABI(),
+      nonce: nonce + 1,
+      gas: gas * 2 + "",
+      gasLimit,
     };
-
-    setItemIdsAndProfileIdsTx["gas"] = await this.web3.eth.estimateGas(
-      setItemIdsAndProfileIdsTx
-    );
 
     // sign and send Tx
     let setAchievementIdsAndProfileIdsTxHash;
@@ -166,7 +177,7 @@ export class Web3Service {
         ),
       ]);
 
-      // Get tx receipt
+      //  tx receipt
       const [
         setAchievementIdsAndProfileIdsTxReceipt,
         setItemIdsAndProfileIdsTxReceipt,
@@ -216,6 +227,7 @@ export class Web3Service {
         }),
       ]);
     } catch (err) {
+      console.log("error");
       console.log(err);
     }
 
@@ -302,6 +314,13 @@ export class Web3Service {
       },
     });
 
+    if (user.chain !== "BNB") {
+      throw new NotFoundException({
+        message: "Not r3plica BNB user",
+        playFabId,
+      });
+    }
+
     const contract = new this.web3.eth.Contract(
       TESTNET_PAFSBT_IMPL_CONTRACT_ABI,
       TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS
@@ -350,11 +369,13 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`PAFSBT mint request Tx sended for user ${user.playFabId}`);
+      Logger.debug(
+        `BNB PAFSBT mint request Tx sended - User ${user.playFabId} : Tx ${receipt["transactionHash"]}`
+      );
 
-      return receipt.transactionHash;
+      return receipt["transactionHash"];
     } catch (err) {
-      console.log(err);
+      console.log("error", err);
     }
   }
 
@@ -364,6 +385,13 @@ export class Web3Service {
         playFabId,
       },
     });
+
+    if (user.chain !== "BNB") {
+      throw new NotFoundException({
+        message: "Not r3plica BNB user",
+        playFabId,
+      });
+    }
 
     if (!user.walletAddress) {
       throw new NotFoundException("User wallet is not linked");
@@ -423,9 +451,9 @@ export class Web3Service {
         },
       });
 
-      Logger.debug(`mint PAFSBT tx is sent for user ${user.playFabId}`);
+      Logger.debug(`BNB - PAFSBT is sent for user ${user.playFabId}`);
 
-      return { txHash: receipt.transactionHash };
+      return { txHash: receipt["transactionHash"] };
     } catch (err) {
       console.log(err);
     }
@@ -446,5 +474,20 @@ export class Web3Service {
     }
 
     return "0";
+  }
+
+  async getTransactionStatus(txHash: string) {
+    const url = `https://api-testnet.bscscan.com/api?module=transaction&action=gettxreceiptstatus&txhash=${txHash}&apikey=${process.env.BSCAN_API_KEY}`;
+
+    let response: any;
+    try {
+      const { data } = await axios.get(url);
+
+      response = data;
+    } catch (error) {
+      response = error.response;
+    }
+
+    return axiosReturnOrThrow(response);
   }
 }
