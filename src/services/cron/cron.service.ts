@@ -172,7 +172,11 @@ export class CronService {
   @Cron("*/2 * * * *")
   async updateUserItemAndAchievement() {
     this.logger.log("updateUserItemAndAchievement");
-    const users = await this.prismaService.user.findMany({});
+    const users = await this.prismaService.user.findMany({
+      where: {
+        chain: "BNB",
+      },
+    });
 
     for (const user of users) {
       const profileToken = await this.prismaService.profileToken.findFirst({
@@ -203,7 +207,13 @@ export class CronService {
             },
           });
 
-          if (!itemToken) continue;
+          if (!itemToken) {
+            await this.notificationService.sendSlackNotify({
+              title: "r3plica BNB updateUserItemAndAchievement Cron Job",
+              text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\r minting pool is full.`,
+            });
+            continue;
+          }
 
           itemTokenIds.push(itemToken.tokenId);
           profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
@@ -257,7 +267,13 @@ export class CronService {
               },
             });
 
-          if (!achievementToken) continue;
+          if (!achievementToken) {
+            await this.notificationService.sendSlackNotify({
+              title: "r3plica XDC updateUserItemAndAchievement Cron Job",
+              text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\r minting pool is full.`,
+            });
+            continue;
+          }
 
           achievementTokenIds.push(achievementToken.tokenId);
           profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
