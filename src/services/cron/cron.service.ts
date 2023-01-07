@@ -204,39 +204,51 @@ export class CronService {
         let profileTokenIdsByItemTokenIds = [];
 
         for (const item of items) {
-          const itemToken = await this.prismaService.itemToken.findFirst({
-            where: {
-              chain: "XDC",
-              contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
-              itemId: item.itemID,
-              playFabId: null,
-            },
-          });
+          const userItemTokenList = await this.prismaService.itemToken.findMany(
+            {
+              where: {
+                chain: "XDC",
+                playFabId: user.playFabId,
+                itemId: item.itemID,
+              },
+            }
+          );
 
-          if (!itemToken) {
+          if (userItemTokenList.length <= 0) {
+            const itemToken = await this.prismaService.itemToken.findFirst({
+              where: {
+                chain: "XDC",
+                contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+                itemId: item.itemID,
+                playFabId: null,
+              },
+            });
+
+            if (!itemToken) {
+              await this.notificationService.sendSlackNotify({
+                title: "r3plica XDC updateUserItemAndAchievement Cron Job",
+                text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\r minting pool is full.`,
+              });
+              continue;
+            }
+
+            itemTokenIds.push(itemToken.tokenId);
+            profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
+
+            await this.prismaService.itemToken.update({
+              where: {
+                tokenId: itemToken.tokenId,
+              },
+              data: {
+                playFabId: user.playFabId,
+              },
+            });
+
             await this.notificationService.sendSlackNotify({
               title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-              text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\r minting pool is full.`,
+              text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\rTokenized for USER #${user.playFabId}`,
             });
-            continue;
           }
-
-          itemTokenIds.push(itemToken.tokenId);
-          profileTokenIdsByItemTokenIds.push(profileToken.tokenId);
-
-          await this.prismaService.itemToken.update({
-            where: {
-              tokenId: itemToken.tokenId,
-            },
-            data: {
-              playFabId: user.playFabId,
-            },
-          });
-
-          await this.notificationService.sendSlackNotify({
-            title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-            text: `IAFSBT #${item.itemID} (${item.itemName} / ${item.rarity})\rTokenized for USER #${user.playFabId}`,
-          });
         }
       }
 
@@ -256,41 +268,53 @@ export class CronService {
 
         let achievementTokenIds = [];
         let profileTokenIdsByAchievementTokenIds = [];
+
         for (const achievement of achievements) {
-          const achievementToken =
-            await this.prismaService.achievementToken.findFirst({
+          const userAchievementTokenList =
+            await this.prismaService.achievementToken.findMany({
               where: {
                 chain: "XDC",
-                contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+                playFabId: user.playFabId,
                 achievementId: achievement.questID,
-                playFabId: null,
               },
             });
 
-          if (!achievementToken) {
+          if (userAchievementTokenList.length <= 0) {
+            const achievementToken =
+              await this.prismaService.achievementToken.findFirst({
+                where: {
+                  chain: "XDC",
+                  contractAddress: TESTNET_PAFSBT_PROXY_CONTRACT_ADDRESS,
+                  achievementId: achievement.questID,
+                  playFabId: null,
+                },
+              });
+
+            if (!achievementToken) {
+              await this.notificationService.sendSlackNotify({
+                title: "r3plica XDC updateUserItemAndAchievement Cron Job",
+                text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\r minting pool is full.`,
+              });
+              continue;
+            }
+
+            achievementTokenIds.push(achievementToken.tokenId);
+            profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
+
+            await this.prismaService.achievementToken.update({
+              where: {
+                tokenId: achievementToken.tokenId,
+              },
+              data: {
+                playFabId: user.playFabId,
+              },
+            });
+
             await this.notificationService.sendSlackNotify({
               title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-              text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\r minting pool is full.`,
+              text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
             });
-            continue;
           }
-
-          achievementTokenIds.push(achievementToken.tokenId);
-          profileTokenIdsByAchievementTokenIds.push(profileToken.tokenId);
-
-          await this.prismaService.achievementToken.update({
-            where: {
-              tokenId: achievementToken.tokenId,
-            },
-            data: {
-              playFabId: user.playFabId,
-            },
-          });
-
-          await this.notificationService.sendSlackNotify({
-            title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-            text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
-          });
         }
       }
     }
