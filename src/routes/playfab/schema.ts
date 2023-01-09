@@ -103,7 +103,7 @@ const item = {
 
 const achievement = {
   questID: { type: "number" },
-  questTitle: { type: "string" },
+  questName: { type: "string" },
   description: { type: "string" },
   state: { type: "number", enum: [0, 1, 2, 3, 4] },
   objectives: { type: "array", items: { type: "object" } },

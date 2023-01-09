@@ -293,7 +293,7 @@ export class CronService {
             if (!achievementToken) {
               await this.notificationService.sendSlackNotify({
                 title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-                text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\r minting pool is full.`,
+                text: `AAFSBT ${achievement.questID} (${achievement.questName})\r minting pool is full.`,
               });
               continue;
             }
@@ -312,7 +312,7 @@ export class CronService {
 
             await this.notificationService.sendSlackNotify({
               title: "r3plica XDC updateUserItemAndAchievement Cron Job",
-              text: `AAFSBT ${achievement.questID} (${achievement.questTitle})\rTokenized for USER #${user.playFabId}`,
+              text: `AAFSBT ${achievement.questID} (${achievement.questName})\rTokenized for USER #${user.playFabId}`,
             });
           }
         }

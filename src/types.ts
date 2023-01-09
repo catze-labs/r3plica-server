@@ -23,7 +23,7 @@ export enum AchievementState {
 
 export type UserAchievement = {
   questID: number;
-  questTitle: string;
+  questName: string;
   description: string;
   state: AchievementState;
   objectives: any[];
