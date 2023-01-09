@@ -8,6 +8,7 @@ import { user } from "@prisma/client";
 import axios from "axios";
 import { PrismaService } from "src/prisma.service";
 import {
+  SlackColor,
   UserAchievement,
   UserAchievementWrapper,
   UserItem,
@@ -128,7 +129,11 @@ export class PlayFabService {
           text: `User Register & PAFSBT Minted\rUSER #${user.playFabId}\rHash: ${txHash}`,
         });
     } catch (err) {
-      console.log("Error", err);
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC Registered & Mint PAFSBT",
+        text: `User Registered but PAFSBT Minting failed\rUSER #${user.playFabId}`,
+        color: SlackColor.danger,
+      });
       return parsedData;
     }
 

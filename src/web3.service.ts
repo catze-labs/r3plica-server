@@ -8,6 +8,8 @@ import {
 import { PrismaService } from "./prisma.service";
 import { ethers } from "ethers";
 import axios from "axios";
+import { SlackColor } from "./types";
+import { NotificationService } from "./services/notification/notification.service";
 
 @Injectable()
 export class Web3Service {
@@ -16,7 +18,10 @@ export class Web3Service {
   );
   private web3 = new Web3(this.provider);
 
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private notificationService: NotificationService
+  ) {}
 
   async getFsbtTransfers(playFabId: string) {
     const profileTransfers = await this.prismaService.profileTransfer.findMany({
@@ -230,8 +235,18 @@ export class Web3Service {
           skipDuplicates: true,
         }),
       ]);
+
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC IAFSBT, AAFSBT transferred to User wallet",
+        text: `IAFSBT, AAFSBT transferred success to \rUSER #${user.playFabId}\rIAFSBT Tx Hash: ${setItemIdsAndProfileIdsTxHash}\rAAFSBT Tx Hash: ${setAchievementIdsAndProfileIdsTxHash}`,
+        color: SlackColor.success,
+      });
     } catch (err) {
-      console.log("error");
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC IAFSBT, AAFSBT transferred failed to User wallet.",
+        text: `IAFSBT, AAFSBT transferred failed to \rUSER #${user.playFabId}`,
+        color: SlackColor.success,
+      });
       console.log(err);
     }
 
@@ -479,8 +494,19 @@ export class Web3Service {
 
       Logger.debug(`XDC - PAFSBT is sent for user ${user.playFabId}`);
 
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC PAFSBT transferred to User wallet",
+        text: `PAFSBT transferred success to \rUSER #${user.playFabId}\rTx Hash: ${receipt.transactionHash}`,
+        color: SlackColor.success,
+      });
+
       return { txHash: receipt["transactionHash"] };
     } catch (err) {
+      await this.notificationService.sendSlackNotify({
+        title: "r3plica XDC PAFSBT transferred failed to User wallet",
+        text: `PAFSBT transferred failed to \rUSER #${user.playFabId}`,
+        color: SlackColor.danger,
+      });
       console.log(err);
     }
   }
